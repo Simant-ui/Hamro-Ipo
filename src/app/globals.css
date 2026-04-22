@@ -1,26 +1,116 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #10b981;
+  --color-primary-dark: #059669;
+  --color-secondary: #06b6d4;
+  --color-accent: #f59e0b;
+  
+  --shadow-premium: 0 10px 40px -10px rgba(0,0,0,0.1);
+  --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.2);
+}
+
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #202124;
+  --surface: #ffffff;
+  --border: #e8eaed;
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(32, 33, 36, 0.08);
+  --accent-glow: rgba(16, 185, 129, 0.05);
+  --card-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
+  --mesh-opacity: 0.03;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: #111111;
+  --foreground: #ffffff;
+  --surface: #1a1a1a;
+  --border: #222222;
+  --glass-bg: #1a1a1a;
+  --glass-border: #252525;
+  --accent-glow: rgba(16, 185, 129, 0.05);
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --mesh-opacity: 0;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-jakarta), var(--font-inter), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+h1, h2, h3, h4, h5, h6, .jakarta {
+  font-family: var(--font-jakarta), sans-serif;
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-[var(--glass-bg)] backdrop-blur-3xl border border-[var(--glass-border)] rounded-[2.5rem] transition-all duration-500 relative overflow-hidden;
+    box-shadow: var(--card-shadow);
+  }
+  
+  .glass-card-hover {
+    @apply hover:border-emerald-500/30 hover:-translate-y-1.5 transition-all duration-500;
+  }
+
+  .dark .glass-card-hover {
+    @apply hover:shadow-[0_0_40px_-10px_rgba(0,255,159,0.2)];
+  }
+
+  .premium-gradient {
+    background: linear-gradient(135deg, #00ff9f 0%, #00d4ff 100%);
+  }
+
+  .premium-text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600;
+  }
+
+  .dark .premium-text-gradient {
+    @apply from-emerald-300 via-cyan-300 to-blue-400;
+  }
+
+  .mesh-gradient {
+    background-color: var(--background);
+    /* Removed radial gradients for purai dark look */
+  }
+}
+
+.glow-text {
+  text-shadow: 0 0 15px var(--accent-glow);
+}
+
+.premium-btn {
+  @apply px-6 py-3.5 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all duration-500 transform active:scale-95 flex items-center justify-center gap-2 relative overflow-hidden;
+  font-family: var(--font-jakarta), sans-serif;
+}
+
+.premium-btn-primary {
+  @apply bg-emerald-500 hover:bg-emerald-400 text-slate-900 shadow-lg hover:shadow-xl transition-all;
+}
+
+.dark .premium-btn-primary {
+  @apply shadow-[0_0_20px_rgba(0,255,159,0.3)] hover:shadow-[0_0_30px_rgba(0,255,159,0.5)];
+}
+
+.input-premium {
+  @apply w-full bg-[var(--surface)] border border-[var(--border)] rounded-2xl px-6 py-4.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-500 placeholder-slate-400 text-[var(--foreground)] font-bold;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-slate-200 rounded-full hover:bg-emerald-500/50 transition-colors;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-slate-800/50;
 }
