@@ -16,6 +16,8 @@ interface AppState {
   setSearchQuery: (query: string) => void
   setLoading: (isLoading: boolean) => void
   setMembershipModalOpen: (isOpen: boolean) => void
+  livePrices: any[]
+  setLivePrices: (prices: any[]) => void
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -39,4 +41,6 @@ export const useAppStore = create<AppState>((set) => ({
   setSearchQuery: (query) => set({ searchQuery: query }),
   setLoading: (isLoading) => set({ isLoading }),
   setMembershipModalOpen: (isOpen) => set({ isMembershipModalOpen: isOpen }),
+  livePrices: [],
+  setLivePrices: (livePrices) => set({ livePrices }),
 }))

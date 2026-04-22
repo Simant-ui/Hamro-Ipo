@@ -90,9 +90,6 @@ export default function AccountsPage() {
     fetchBanks()
   }, [])
 
-  useEffect(() => {
-    if (formData.bank_name) {
-      const selectedBank = banks.find(b => b.name === formData.bank_name || `${b.dp_code} - ${b.name}` === formData.bank_name)
   const handleSaveAccount = async (formData: any) => {
     setLoading(true)
     try {
@@ -198,7 +195,6 @@ export default function AccountsPage() {
               <button
                 onClick={() => {
                   setIsModalOpen(true)
-                  setStep(1)
                 }}
                 className="mt-6 text-blue-500 hover:underline font-semibold"
               >

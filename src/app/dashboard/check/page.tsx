@@ -129,9 +129,31 @@ export default function CheckPage() {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-8 space-y-4"
+            className="mt-8 space-y-6"
           >
-            <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest px-1">Check Results</h2>
+            {/* Summary Card */}
+            {!isChecking && (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="glass-card p-6 bg-emerald-500/5 border-emerald-500/10 rounded-3xl">
+                  <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1">Total Allotted</p>
+                  <p className="text-3xl font-black text-white italic">
+                    {results.reduce((acc, res) => acc + res.applications.filter(a => a.statusName === 'Allotted').length, 0)}
+                  </p>
+                </div>
+                <div className="glass-card p-6 bg-rose-500/5 border-rose-500/10 rounded-3xl">
+                  <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-1">Not Allotted</p>
+                  <p className="text-3xl font-black text-white italic">
+                    {results.reduce((acc, res) => acc + res.applications.filter(a => a.statusName === 'Not Allotted').length, 0)}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between px-1">
+              <h2 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Detailed Results</h2>
+              <p className="text-[10px] font-bold text-slate-600 uppercase italic">{results.length} Accounts Scanned</p>
+            </div>
+
             <div className="space-y-6">
               {results.map((res, i) => (
                 <motion.div
@@ -139,7 +161,7 @@ export default function CheckPage() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.1 }}
-                  className="glass-card p-6 rounded-3xl border border-white/5 bg-slate-900/50 backdrop-blur-xl space-y-4"
+                  className="glass-card p-8 rounded-[2.5rem] border border-white/5 bg-slate-900/40 backdrop-blur-3xl shadow-2xl space-y-6 group hover:border-emerald-500/20 transition-all"
                 >
                   <div className="flex items-center justify-between border-b border-white/5 pb-4">
                     <div className="flex items-center gap-4">

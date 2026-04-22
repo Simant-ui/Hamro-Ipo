@@ -16,9 +16,105 @@ import {
   BarChart3
 } from 'lucide-react'
 
+import React from 'react'
+import toast from 'react-hot-toast'
+
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
+
 export default function LandingPage() {
+  const router = useRouter();
+  const [deferredPrompt, setDeferredPrompt] = React.useState<any>(null);
+  const [showInstallBanner, setShowInstallBanner] = React.useState(false);
+
+  React.useEffect(() => {
+    // Redirect if running in standalone mode (installed app)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
+    
+    if (isStandalone) {
+      const checkSession = async () => {
+        const { data: { session } } = await createClient().auth.getSession();
+        if (session) {
+          router.push('/dashboard');
+        } else {
+          router.push('/login');
+        }
+      };
+      checkSession();
+      return;
+    }
+
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallBanner(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstall = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+        setShowInstallBanner(false);
+      }
+    } else {
+      // Check if it's iOS
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+      if (isIOS) {
+        toast.success("To install on iPhone: Tap 'Share' icon and then 'Add to Home Screen' 📲", {
+          duration: 6000,
+          style: {
+            background: '#10b981',
+            color: '#000',
+            fontWeight: 'bold'
+          }
+        });
+      } else {
+        toast.success("Tap the three dots (⋮) in your browser menu and select 'Install App' or 'Add to Home Screen' 📱", {
+          duration: 6000,
+          style: {
+            background: '#10b981',
+            color: '#000',
+            fontWeight: 'bold'
+          }
+        });
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#05060f] text-white selection:bg-emerald-500/30 overflow-hidden font-jakarta">
+      {/* Install Banner for Mobile */}
+      {showInstallBanner && (
+        <motion.div 
+          initial={{ y: -100 }}
+          animate={{ y: 0 }}
+          className="install-banner"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center font-bold text-emerald-400">H</div>
+            <div>
+              <p className="font-bold text-sm">Install Hamro IPO</p>
+              <p className="text-[10px] opacity-70">Experience the full power of our app</p>
+            </div>
+          </div>
+          <button 
+            onClick={handleInstall}
+            className="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold hover:scale-105 transition-transform"
+          >
+            Install Now
+          </button>
+        </motion.div>
+      )}
+
       {/* Premium Ambient Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-500/10 rounded-full blur-[120px] animate-pulse" />
@@ -92,10 +188,15 @@ export default function LandingPage() {
             Join the Elite
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
-          <Link href="/login" className="px-10 py-5 rounded-2xl font-bold text-white border border-white/10 hover:bg-white/5 transition-all backdrop-blur-xl flex items-center gap-2">
-            Institutional Demo
-            <Globe className="w-5 h-5 opacity-50" />
-          </Link>
+          <button 
+            onClick={handleInstall}
+            className="px-10 py-5 rounded-2xl font-bold text-white border border-white/10 hover:bg-white/5 transition-all backdrop-blur-xl flex items-center gap-2 group"
+          >
+            Download for Android
+            <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-black transition-colors">
+              <Activity className="w-4 h-4" />
+            </div>
+          </button>
         </motion.div>
 
         {/* Dynamic Dashboard Preview */}

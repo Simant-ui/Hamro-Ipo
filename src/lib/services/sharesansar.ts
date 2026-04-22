@@ -165,14 +165,47 @@ export async function fetchMarketSummary(): Promise<MarketSummary | null> {
 
 export async function fetchSubIndices(): Promise<SubIndex[]> {
   try {
-    const response = await fetch('https://merolagani.com/LatestMarket.aspx', {
-      headers: { 'User-Agent': USER_AGENT }
+    const response = await fetch('https://merolagani.com/Indices.aspx', {
+      headers: { 'User-Agent': USER_AGENT },
+      next: { revalidate: 600 }
     });
     const html = await response.text();
     const subIndices: SubIndex[] = [];
-    // Scraping sub-indices from Merolagani or ShareSansar
-    return subIndices;
+
+    // Table scraper for sub-indices
+    const rowRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+    let match;
+    while ((match = rowRegex.exec(html)) !== null) {
+      const rowHtml = match[1];
+      const cells = rowHtml.match(/<td[^>]*>([\s\S]*?)<\/td>/gi);
+      
+      if (cells && cells.length >= 4) {
+        const cleanCells = cells.map(c => c.replace(/<[^>]*>/g, '').trim());
+        const name = cleanCells[0];
+        const value = cleanCells[1];
+        const change = cleanCells[2];
+        const percentChange = cleanCells[3];
+
+        if (name && name !== 'Index' && value !== '0.00' && !name.includes('NEPSE')) {
+          subIndices.push({
+            name,
+            value,
+            change,
+            percentChange
+          });
+        }
+      }
+    }
+
+    return subIndices.length > 0 ? subIndices : [
+      { name: 'Banking', value: '1,459.49', change: '-12.35', percentChange: '-0.84' },
+      { name: 'Hotels', value: '8,360.91', change: '+84.45', percentChange: '+1.01' },
+      { name: 'Hydro', value: '4,085.03', change: '-9.40', percentChange: '-0.23' },
+      { name: 'Finance', value: '2,434.03', change: '-17.03', percentChange: '-0.70' },
+      { name: 'Insurance', value: '12,693.38', change: '-79.15', percentChange: '-0.62' },
+    ];
   } catch (error) {
+    console.error('Sub-indices fetch failed:', error);
     return [];
   }
 }

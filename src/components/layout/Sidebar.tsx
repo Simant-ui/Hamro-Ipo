@@ -48,7 +48,7 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="w-64 h-screen fixed left-0 top-0 bg-[var(--glass-bg)] backdrop-blur-2xl border-r border-[var(--glass-border)] flex flex-col z-50 overflow-y-auto custom-scrollbar">
+    <aside className="hidden md:flex w-64 h-screen fixed left-0 top-0 bg-[var(--glass-bg)] backdrop-blur-2xl border-r border-[var(--glass-border)] flex-col z-50 overflow-y-auto custom-scrollbar">
       <div className="p-8">
         <div className="flex items-center gap-4 mb-12 px-2 mt-2">
           <div className="w-14 h-14 rounded-[1.5rem] flex items-center justify-center shadow-lg dark:shadow-[0_0_30px_rgba(0,255,159,0.25)] border-2 border-emerald-500/30 overflow-hidden bg-white dark:bg-black relative group">

@@ -13,10 +13,20 @@ import {
   Layers,
   Globe,
   Loader2,
-  ExternalLink
+  ExternalLink,
+  RefreshCw
 } from 'lucide-react'
 import { CompanyDetails, PriceHistory } from '@/lib/services/stockDetails'
 import { cn } from '@/lib/utils'
+import { 
+  AreaChart, 
+  Area, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer 
+} from 'recharts'
 
 interface StockDetailModalProps {
   symbol: string | null
@@ -58,22 +68,22 @@ export function StockDetailModal({ symbol, isOpen, onClose }: StockDetailModalPr
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
+      <div className="fixed inset-0 md:left-64 z-[100] flex items-start justify-center p-4 md:p-8 pt-12 md:pt-24 overflow-y-auto no-scrollbar">
         {/* Backdrop */}
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+          className="absolute inset-0 bg-black/60 backdrop-blur-md"
         />
 
         {/* Modal */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 0 }}
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 0 }}
-          className="relative w-full max-w-4xl max-h-[85vh] overflow-hidden bg-slate-950 border border-white/10 rounded-[3rem] shadow-[0_0_100px_rgba(0,0,0,0.5)] flex flex-col"
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          className="relative w-full max-w-6xl max-h-[90vh] overflow-hidden bg-slate-950 border border-white/10 rounded-[3rem] shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col"
         >
           {/* Header */}
           <div className="p-8 md:p-10 border-b border-white/5 flex items-start justify-between bg-white/[0.02] backdrop-blur-md">
@@ -105,12 +115,33 @@ export function StockDetailModal({ symbol, isOpen, onClose }: StockDetailModalPr
                 </div>
               </div>
             </div>
-            <button 
-              onClick={onClose}
-              className="p-4 bg-white/5 border border-white/10 rounded-[1.25rem] hover:bg-white/10 transition-all text-slate-400 hover:text-white hover:rotate-90 duration-300 shadow-lg"
-            >
-              <X className="w-6 h-6" />
-            </button>
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={() => {
+                  const fetchData = async () => {
+                    setLoading(true)
+                    setError(null)
+                    try {
+                      const res = await fetch(`/api/market/stock-details?symbol=${symbol}`)
+                      const json = await res.json()
+                      if (json.success) setData(json.data)
+                      else setError(json.message)
+                    } catch (err) { setError('Failed to refresh') }
+                    finally { setLoading(false) }
+                  }
+                  fetchData()
+                }}
+                className={cn("p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-[1.25rem] hover:bg-emerald-500/20 transition-all text-emerald-500 shadow-lg", loading && "animate-spin")}
+              >
+                <RefreshCw className="w-6 h-6" />
+              </button>
+              <button 
+                onClick={onClose}
+                className="p-4 bg-white/5 border border-white/10 rounded-[1.25rem] hover:bg-white/10 transition-all text-slate-400 hover:text-white hover:rotate-90 duration-300 shadow-lg"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
           </div>
 
           {/* Content */}
@@ -177,8 +208,70 @@ export function StockDetailModal({ symbol, isOpen, onClose }: StockDetailModalPr
                     </div>
                   </div>
 
-                  {/* Right Section: Transaction History (7 cols) */}
-                  <div className="lg:col-span-7 flex flex-col h-full">
+                  {/* Right Section: Chart & History (7 cols) */}
+                  <div className="lg:col-span-7 space-y-6 flex flex-col h-full">
+                    
+                    {/* Price Chart */}
+                    <div className="glass-card p-8 bg-white/[0.03] border-white/5 rounded-[2.5rem] flex-shrink-0 h-[350px]">
+                      <div className="flex items-center justify-between mb-8">
+                        <div>
+                          <h3 className="text-sm font-black text-white uppercase tracking-widest">Performance</h3>
+                          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Price Trend (Last 10 Trading Days)</p>
+                        </div>
+                        <div className="flex items-center gap-4">
+                           <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                              <span className="text-[9px] font-black text-slate-400 uppercase">LTP</span>
+                           </div>
+                        </div>
+                      </div>
+                      
+                      <div className="h-[220px] w-full">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+                          <AreaChart data={[...data.history].reverse()}>
+                            <defs>
+                              <linearGradient id="colorLtp" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                                <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                              </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
+                            <XAxis 
+                              dataKey="date" 
+                              hide 
+                            />
+                            <YAxis 
+                              hide 
+                              domain={['auto', 'auto']}
+                            />
+                            <Tooltip 
+                              content={({ active, payload }) => {
+                                if (active && payload && payload.length) {
+                                  return (
+                                    <div className="bg-slate-900 border border-white/10 p-3 rounded-xl shadow-2xl backdrop-blur-md">
+                                      <p className="text-[10px] font-black text-slate-500 uppercase mb-1">{payload[0].payload.date}</p>
+                                      <p className="text-sm font-black text-white">Rs. {payload[0].value}</p>
+                                    </div>
+                                  );
+                                }
+                                return null;
+                              }}
+                            />
+                            <Area 
+                              type="monotone" 
+                              dataKey="ltp" 
+                              stroke="#10b981" 
+                              strokeWidth={3}
+                              fillOpacity={1} 
+                              fill="url(#colorLtp)" 
+                              animationDuration={2000}
+                            />
+                          </AreaChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+
+                    {/* History Table */}
                     <div className="glass-card flex-1 flex flex-col bg-white/[0.03] border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
                       <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
                         <div className="flex items-center gap-4">
@@ -187,7 +280,6 @@ export function StockDetailModal({ symbol, isOpen, onClose }: StockDetailModalPr
                           </div>
                           <div>
                             <h3 className="text-sm font-black text-white uppercase tracking-widest">Transaction History</h3>
-                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Last 10 Trading Days</p>
                           </div>
                         </div>
                         <a 

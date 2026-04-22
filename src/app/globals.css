@@ -40,6 +40,10 @@ body {
   font-family: var(--font-jakarta), var(--font-inter), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-top: env(safe-area-inset-top);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
 }
 
 h1, h2, h3, h4, h5, h6, .jakarta {
@@ -48,12 +52,12 @@ h1, h2, h3, h4, h5, h6, .jakarta {
 
 @layer components {
   .glass-card {
-    @apply bg-[var(--glass-bg)] backdrop-blur-3xl border border-[var(--glass-border)] rounded-[2.5rem] transition-all duration-500 relative overflow-hidden;
+    @apply bg-[var(--glass-bg)] backdrop-blur-3xl border border-[var(--glass-border)] rounded-[2rem] transition-all duration-500 relative overflow-hidden;
     box-shadow: var(--card-shadow);
   }
   
   .glass-card-hover {
-    @apply hover:border-emerald-500/30 hover:-translate-y-1.5 transition-all duration-500;
+    @apply hover:border-emerald-500/30 hover:-translate-y-1 transition-all duration-500;
   }
 
   .dark .glass-card-hover {
@@ -61,7 +65,7 @@ h1, h2, h3, h4, h5, h6, .jakarta {
   }
 
   .premium-gradient {
-    background: linear-gradient(135deg, #00ff9f 0%, #00d4ff 100%);
+    background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
   }
 
   .premium-text-gradient {
@@ -71,11 +75,6 @@ h1, h2, h3, h4, h5, h6, .jakarta {
   .dark .premium-text-gradient {
     @apply from-emerald-300 via-cyan-300 to-blue-400;
   }
-
-  .mesh-gradient {
-    background-color: var(--background);
-    /* Removed radial gradients for purai dark look */
-  }
 }
 
 .glow-text {
@@ -83,7 +82,7 @@ h1, h2, h3, h4, h5, h6, .jakarta {
 }
 
 .premium-btn {
-  @apply px-6 py-3.5 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all duration-500 transform active:scale-95 flex items-center justify-center gap-2 relative overflow-hidden;
+  @apply px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all duration-500 transform active:scale-95 flex items-center justify-center gap-2 relative overflow-hidden;
   font-family: var(--font-jakarta), sans-serif;
 }
 
@@ -96,7 +95,7 @@ h1, h2, h3, h4, h5, h6, .jakarta {
 }
 
 .input-premium {
-  @apply w-full bg-[var(--surface)] border border-[var(--border)] rounded-2xl px-6 py-4.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-500 placeholder-slate-400 text-[var(--foreground)] font-bold;
+  @apply w-full bg-[var(--surface)] border border-[var(--border)] rounded-2xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-500 placeholder-slate-400 text-[var(--foreground)] font-bold;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -112,5 +111,21 @@ h1, h2, h3, h4, h5, h6, .jakarta {
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-slate-800/50;
+  @apply bg-slate-800 rounded-full;
+}
+
+.nav-blur {
+  @apply bg-[var(--glass-bg)] backdrop-blur-2xl border-t border-[var(--glass-border)];
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem);
+}
+
+@media (max-width: 768px) {
+  .mobile-grid {
+    @apply grid-cols-1 gap-4;
+  }
+}
+
+.install-banner {
+  @apply fixed bottom-4 left-4 right-4 z-[100] bg-emerald-500 text-slate-950 p-4 rounded-2xl flex items-center justify-between shadow-2xl;
 }

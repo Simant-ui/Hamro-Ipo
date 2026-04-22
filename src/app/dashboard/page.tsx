@@ -17,7 +17,8 @@ import {
   UserCircle,
   Edit3,
   ArrowUpRight,
-  Check
+  Check,
+  Calendar
 } from 'lucide-react'
 import { 
   AreaChart, 
@@ -74,28 +75,32 @@ export default function DashboardPage() {
   const [subIndices, setSubIndices] = useState<any[]>([])
   const [news, setNews] = useState<any[]>([])
   const [isRefreshing, setIsRefreshing] = useState(false)
-  const [livePrices, setLivePrices] = useState<any[]>([])
+  const { livePrices, setLivePrices, searchQuery, setSearchQuery } = useAppStore()
+  const [upcomingIpos, setUpcomingIpos] = useState<any[]>([])
 
   const fetchData = async () => {
     if (!hasHydrated) return
     setIsRefreshing(true)
     try {
-      const [marketRes, newsRes, subRes, pricesRes] = await Promise.all([
+      const [marketRes, newsRes, subRes, pricesRes, ipoRes] = await Promise.all([
         fetch('/api/market/summary'),
         fetch('/api/news/latest'),
         fetch('/api/market/sub-indices'),
-        fetch('/api/market/live-prices')
+        fetch('/api/market/live-prices'),
+        fetch('/api/ipo/upcoming')
       ])
       
       const marketJson = await marketRes.json()
       const newsJson = await newsRes.json()
       const subJson = await subRes.json()
       const pricesJson = await pricesRes.json()
+      const ipoJson = await ipoRes.json()
       
       if (marketJson.success) setMarketData(marketJson.data)
       if (newsJson.success) setNews(newsJson.data)
       if (subJson.success) setSubIndices(subJson.data)
       if (pricesJson.success) setLivePrices(pricesJson.data)
+      if (ipoJson.success) setUpcomingIpos(ipoJson.data)
     } catch (err) {
       console.error('Failed to fetch real-time data:', err)
     } finally {
@@ -156,7 +161,6 @@ export default function DashboardPage() {
     toast.success('BOID Copied!')
   }
 
-  const { searchQuery } = useAppStore()
   const filteredAccounts = accounts.filter(acc => 
     acc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     acc.boid.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -222,12 +226,17 @@ export default function DashboardPage() {
 
             <div className="grid grid-cols-2 gap-8 mt-10 pt-8 border-t border-white/5">
               <div>
-                <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1 jakarta">Day Low</p>
-                <p className="text-lg font-black text-slate-700 dark:text-slate-300 jakarta">2,805.12</p>
+                <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1 jakarta">Market Turnover</p>
+                <p className="text-lg font-black text-slate-700 dark:text-slate-300 jakarta">Rs. {marketData?.turnover || '5.77 Arba'}</p>
               </div>
               <div>
-                <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1 jakarta">Day High</p>
-                <p className="text-lg font-black text-slate-700 dark:text-slate-300 jakarta">2,838.40</p>
+                <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1 jakarta">Today's Point Change</p>
+                <p className={cn(
+                  "text-lg font-black jakarta",
+                  marketData?.change?.includes('+') ? "text-emerald-500" : "text-rose-500"
+                )}>
+                  {marketData?.change || '+5.36'}
+                </p>
               </div>
             </div>
           </div>
@@ -470,6 +479,55 @@ export default function DashboardPage() {
           ) : (
             [1, 2, 3, 4].map(i => (
               <div key={i} className="glass-card p-5 animate-pulse bg-black/20 border-white/5 h-24" />
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* Upcoming IPOs Section */}
+      <div className="space-y-6">
+        <div className="flex items-center justify-between px-2">
+          <div className="flex items-center gap-4">
+            <div className="w-2 h-8 bg-amber-500 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]" />
+            <h2 className="text-3xl font-black tracking-tighter uppercase text-[var(--foreground)] jakarta">Upcoming Issues</h2>
+          </div>
+          <Link href="/dashboard/services/upcoming" className="group flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl hover:bg-amber-500/20 transition-all">
+            <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">View All Issues</span>
+            <ArrowUpRight className="w-4 h-4 text-amber-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {upcomingIpos.length > 0 ? (
+            upcomingIpos.slice(0, 4).map((ipo, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className="glass-card p-6 bg-[var(--surface)] border-white/5 flex items-center justify-between group hover:border-amber-500/30 transition-all cursor-pointer"
+                onClick={() => router.push('/dashboard/services/upcoming')}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 group-hover:scale-110 transition-transform">
+                    <Calendar className="w-6 h-6 text-amber-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-black text-[var(--foreground)] group-hover:text-amber-500 transition-colors">{ipo.companyName}</h3>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Rs. {ipo.price} • {ipo.units} Units</p>
+                  </div>
+                </div>
+                <div className={cn(
+                  "px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border",
+                  ipo.status === 'Open' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" : "bg-amber-500/10 border-amber-500/20 text-amber-500"
+                )}>
+                  {ipo.status}
+                </div>
+              </motion.div>
+            ))
+          ) : (
+            [1, 2].map(i => (
+              <div key={i} className="glass-card p-6 animate-pulse bg-black/20 border-white/5 h-20" />
             ))
           )}
         </div>

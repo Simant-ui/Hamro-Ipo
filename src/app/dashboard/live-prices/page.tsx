@@ -16,6 +16,7 @@ import {
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { StockDetailModal } from '@/components/dashboard/StockDetailModal'
+import { useAppStore } from '@/store/useAppStore'
 
 interface StockPrice {
   symbol: string;
@@ -31,7 +32,7 @@ export default function LivePricesPage() {
   const router = useRouter()
   const [prices, setPrices] = useState<StockPrice[]>([])
   const [loading, setLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState('')
+  const { searchQuery, setSearchQuery } = useAppStore()
   const [sortBy, setSortBy] = useState<'symbol' | 'ltp' | 'change'>('symbol')
   const [lastUpdated, setLastUpdated] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
@@ -133,11 +134,11 @@ export default function LivePricesPage() {
 
       {/* Filters & Search */}
       <div className="flex flex-col md:flex-row gap-4 items-center">
-        <div className="relative flex-1 w-full group">
+        <div className="relative flex-1 w-full group md:hidden">
           <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-emerald-500 transition-colors" />
           <input 
             type="text"
-            placeholder="Search symbols (e.g. ADBL, NICA, HIDCL)..."
+            placeholder="Search symbols..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-slate-900/50 border border-white/5 rounded-2xl pl-14 pr-5 py-4 focus:outline-none focus:border-emerald-500/50 transition-all font-bold text-sm"

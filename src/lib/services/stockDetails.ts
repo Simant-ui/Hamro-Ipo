@@ -1,4 +1,4 @@
-const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36';
+const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
 export interface CompanyDetails {
   symbol: string;
@@ -34,66 +34,39 @@ export interface PriceHistory {
 export async function fetchCompanyDetails(symbol: string): Promise<CompanyDetails | null> {
   try {
     const response = await fetch(`https://merolagani.com/CompanyDetail.aspx?symbol=${symbol}`, {
-      headers: { 'User-Agent': USER_AGENT },
-      next: { revalidate: 3600 } // Cache for 1 hour
+      headers: { 
+        'User-Agent': USER_AGENT,
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9'
+      },
+      next: { revalidate: 3600 }
     });
     const html = await response.text();
 
-    // More robust data extraction helper
     const findData = (labels: string[]) => {
-      // Clean HTML of extra spaces and newlines to make regex matching easier
       const cleanHtml = html.replace(/\s+/g, ' ');
-      
       for (const label of labels) {
-        // Try multiple patterns to match the label and its corresponding value
+        // Try multiple patterns to find the data cell
         const patterns = [
-          // Standard table row pattern: <td>Label</td><td>Value</td>
           new RegExp(`(?:<td>|<th>)\\s*${label}\\s*(?:</td>|</th>)\\s*<td[^>]*>\\s*([^<]+)`, 'i'),
-          // Label with colon pattern: <td>Label:</td><td>Value</td>
-          new RegExp(`(?:<td>|<th>)\\s*${label}\\s*:\\s*(?:</td>|</th>)\\s*<td[^>]*>\\s*([^<]+)`, 'i'),
-          // Label followed by <td> within a short distance (most flexible)
-          new RegExp(`${label}[^]{0,100}?<td[^>]*>\\s*([^<\\s][^<]*)`, 'i'),
-          // Simplified fallback
-          new RegExp(`${label}[\\s\\S]*?<td[^>]*>([\\s\\S]*?)</td>`, 'i')
+          new RegExp(`${label}[^]{0,150}?<td[^>]*>\\s*([^<\\s][^<]*)`, 'i'),
+          new RegExp(`${label}[^]{0,50}?<span[^>]*>([^<]+)</span>`, 'i')
         ];
-
         for (const pattern of patterns) {
           const match = cleanHtml.match(pattern);
           if (match && match[1]) {
             const value = match[1].replace(/<[^>]*>/g, '').trim();
-            if (value && value !== '-' && value !== '0.00') return value;
+            if (value && value !== '-' && value !== '0.00' && !value.includes('class=')) return value;
           }
         }
       }
       return '-';
     };
 
-    // Try to find the exact span ID first
     let nameMatch = html.match(/<span[^>]*id="[^"]*lblCompanyName"[^>]*>([\s\S]*?)<\/span>/i);
-    
-    // Fallback to H1 with symbol
-    if (!nameMatch) {
-      nameMatch = html.match(/<h1[^>]*>([\s\S]*?)\((?:[A-Z0-9]+)\)<\/h1>/i);
-    }
-    
-    // Last resort: Title tag, but clean it heavily
-    if (!nameMatch) {
-      nameMatch = html.match(/<title>([\s\S]*?)<\/title>/i);
-    }
-    
     let processedName = symbol;
     if (nameMatch) {
-      let rawName = nameMatch[1].replace(/<[^>]*>/g, '').trim();
-      
-      // Clean up common Merolagani noise
-      processedName = rawName
-        .replace(/^merolagani\s*-\s*/i, '')
-        .replace(/\(.*\)/g, '') // Remove (SYMBOL)
-        .replace(/Detail, Announcements, News, Price History, Floorsheet/gi, '')
-        .replace(/We'd like to send you notifications.*/gi, '')
-        .split('|')[0]
-        .split('\n')[0]
-        .trim();
+      processedName = nameMatch[1].replace(/<[^>]*>/g, '').trim().split('|')[0].trim();
     }
     
     let ltp = findData(['Market Price', 'LTP', 'Last Traded Price']);
@@ -102,81 +75,83 @@ export async function fetchCompanyDetails(symbol: string): Promise<CompanyDetail
       if (ltpMatch) ltp = ltpMatch[1].trim();
     }
 
-    const highLow52 = findData(['52 Weeks High - Low', '52 Week High/Low']);
-    const dayRange = findData(['Day Range', 'Today\'s Range']);
+    // Secondary fallback for fundamentals if standard table extraction fails
+    const highLow52Raw = findData(['52 Weeks High - Low', '52 Week High/Low']);
+    const highLow52 = highLow52Raw.includes('-') ? highLow52Raw.replace(/ - /g, '/') : highLow52Raw;
 
     return {
       symbol,
       name: processedName || symbol,
       sector: findData(['Sector']),
-      sharesOutstanding: findData(['Shares Outstanding']),
-      marketCap: findData(['Market Capitalization']),
-      eps: findData(['EPS', 'EPS \\(Annualized\\)', 'EPS \\(TTM\\)']),
+      sharesOutstanding: findData(['Shares Outstanding', 'Listed Shares']),
+      marketCap: findData(['Market Capitalization', 'Market Cap']),
+      eps: findData(['EPS', 'EPS \\(Annualized\\)', 'Earnings Per Share']),
       ltp: ltp,
-      peRatio: findData(['P/E Ratio', 'PE Ratio']),
-      bookValue: findData(['Book Value']),
-      pbRatio: findData(['PBV', 'P/B Ratio', 'PB Ratio']),
-      dividend: findData(['% Dividend', 'Dividend']),
-      bonus: findData(['% Bonus', 'Bonus']),
-      rightShare: findData(['Right Share']),
-      highLow52: highLow52.replace(/ - /g, '/'),
-      dayRange: dayRange.replace(/ - /g, '/'),
-      open: findData(['Open', 'Open Price', 'O']),
-      high: findData(['High', 'High Price', 'H']),
-      low: findData(['Low', 'Low Price', 'L']),
+      peRatio: findData(['P/E Ratio', 'PE Ratio', 'P/E']),
+      bookValue: findData(['Book Value', 'Net Worth']),
+      pbRatio: findData(['PBV', 'P/B Ratio', 'Price/Book']),
+      dividend: findData(['% Dividend', 'Dividend', 'Cash Dividend']),
+      bonus: findData(['% Bonus', 'Bonus Share', 'Bonus']),
+      rightShare: findData(['Right Share', 'Right']),
+      highLow52: highLow52,
+      dayRange: findData(['Day Range', 'Today High/Low']).replace(/ - /g, '/'),
+      open: findData(['Open', 'Open Price']),
+      high: findData(['High', 'Today High']),
+      low: findData(['Low', 'Today Low']),
       lastUpdated: new Date().toLocaleDateString()
     };
   } catch (error) {
-    console.error(`Failed to fetch details for ${symbol}:`, error);
+    console.error('Failed to fetch details:', error);
     return null;
   }
 }
 
 export async function fetchPriceHistory(symbol: string, baseLtp?: number): Promise<PriceHistory[]> {
-  try {
-    const history: PriceHistory[] = [];
-    const today = new Date();
+  const history: PriceHistory[] = [];
+  const today = new Date();
+  let currentLtp = baseLtp || 500;
+  
+  // Use symbol as seed for consistency
+  const seed = symbol.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const lCG = (s: number) => (s * 1664525 + 1013904223) % 4294967296;
+  let nextSeed = seed;
+
+  const random = () => {
+    nextSeed = lCG(nextSeed);
+    return nextSeed / 4294967296;
+  };
+
+  // Generate 10 trading days
+  let daysCounted = 0;
+  let i = 0;
+  while (daysCounted < 10) {
+    const date = new Date(today);
+    date.setDate(today.getDate() - i);
+    i++;
     
-    // Create a seed from the symbol to make every company's history unique
-    let symbolSeed = 0;
-    for (let i = 0; i < symbol.length; i++) {
-      symbolSeed += symbol.charCodeAt(i) * (i + 1);
-    }
+    // Skip Fridays and Saturdays (NEPSE is Sun-Thu)
+    if (date.getDay() === 5 || date.getDay() === 6) continue;
 
-    // Starting price: use baseLtp if provided, else generate from seed
-    let currentLtp = baseLtp || (100 + (symbolSeed % 1000));
+    const volatility = 0.025; 
+    const trend = 0.001; // Slight upward bias
+    const changePercent = (random() - 0.48) * volatility + trend;
     
-    for (let i = 0; i < 15; i++) {
-      const date = new Date();
-      date.setDate(today.getDate() - i);
-      
-      // Skip weekends (Saturday is 6, Friday is 5 in Nepal market context)
-      // Actually NEPSE is closed on Friday and Saturday
-      if (date.getDay() === 5 || date.getDay() === 6) continue;
+    // Reverse the price for historical days
+    const price = daysCounted === 0 ? currentLtp : currentLtp / (1 + changePercent);
+    const change = daysCounted === 0 ? (currentLtp * changePercent) : (price * changePercent);
 
-      // Realistic price movement based on symbol and day
-      const daySeed = (symbolSeed + (i * 7919)) % 1000; // Use a prime number for better distribution
-      const volatility = 0.02 + ((symbolSeed % 50) / 1000); // 2% to 7% max daily move
-      const changePercent = ((daySeed / 500) - 1) * volatility;
-      const change = currentLtp * changePercent;
-      
-      history.push({
-        date: date.toISOString().split('T')[0],
-        ltp: parseFloat(currentLtp.toFixed(2)),
-        change: parseFloat(change.toFixed(2)),
-        high: parseFloat((currentLtp + Math.abs(change) * 0.5).toFixed(2)),
-        low: parseFloat((currentLtp - Math.abs(change) * 0.5).toFixed(2)),
-        volume: 10000 + (daySeed * 500) + (symbolSeed % 10000)
-      });
+    history.push({
+      date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      ltp: parseFloat(price.toFixed(2)),
+      change: parseFloat(change.toFixed(2)),
+      high: parseFloat((price + Math.abs(change) * (0.1 + random() * 0.4)).toFixed(2)),
+      low: parseFloat((price - Math.abs(change) * (0.1 + random() * 0.4)).toFixed(2)),
+      volume: Math.floor(random() * 80000) + 10000
+    });
 
-      // Move price for the "previous" day (reverse the change)
-      currentLtp = currentLtp / (1 + changePercent);
-      
-      if (history.length >= 10) break;
-    }
-    return history;
-  } catch (error) {
-    console.error('History generation failed:', error);
-    return [];
+    if (daysCounted > 0) currentLtp = price; 
+    daysCounted++;
   }
+
+  return history;
 }
