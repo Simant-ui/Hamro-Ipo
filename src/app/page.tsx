@@ -91,58 +91,61 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#05060f] text-white selection:bg-emerald-500/30 overflow-hidden font-jakarta">
+    <div className="min-h-screen bg-slate-950 text-white selection:bg-emerald-500/30 overflow-hidden font-jakarta">
       {/* Install Banner for Mobile */}
       {showInstallBanner && (
         <motion.div 
           initial={{ y: -100 }}
           animate={{ y: 0 }}
-          className="install-banner"
+          className="fixed top-0 left-0 right-0 z-[100] px-4 py-3 bg-white/10 backdrop-blur-2xl border-b border-white/10 flex items-center justify-between"
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center font-bold text-emerald-400">H</div>
+            <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center font-black text-slate-950">H</div>
             <div>
-              <p className="font-bold text-sm">Install Hamro IPO</p>
-              <p className="text-[10px] opacity-70">Experience the full power of our app</p>
+              <p className="font-bold text-sm">Hamro IPO Elite</p>
+              <p className="text-[10px] text-slate-400">Professional Investment Suite</p>
             </div>
           </div>
           <button 
             onClick={handleInstall}
-            className="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold hover:scale-105 transition-transform"
+            className="px-5 py-2 bg-emerald-500 text-slate-950 rounded-xl text-xs font-black hover:bg-emerald-400 transition-all uppercase tracking-widest"
           >
-            Install Now
+            Install
           </button>
         </motion.div>
       )}
 
       {/* Premium Ambient Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-500/10 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-600/10 rounded-full blur-[140px]" />
-        <div className="absolute top-[20%] right-[15%] w-[30%] h-[30%] bg-purple-600/5 rounded-full blur-[100px]" />
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/10 rounded-full blur-[140px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-blue-600/10 rounded-full blur-[160px]" />
+        <div className="absolute top-[20%] right-[15%] w-[40%] h-[40%] bg-emerald-600/5 rounded-full blur-[120px]" />
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
       </div>
 
       {/* Nav */}
       <nav className="container mx-auto px-6 py-8 flex items-center justify-between relative z-50">
-        <div className="flex items-center gap-3 group cursor-pointer">
-          <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:rotate-6 transition-transform">
-            <span className="text-white font-bold text-xl">H</span>
+        <div className="flex items-center gap-4 group cursor-pointer">
+          <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:rotate-6 transition-all duration-500">
+            <span className="text-slate-950 font-black text-2xl italic">H</span>
           </div>
-          <span className="text-xl font-bold text-white tracking-tight uppercase">Hamro IPO</span>
+          <div className="flex flex-col">
+            <span className="text-2xl font-black text-white tracking-tighter uppercase italic leading-none">Hamro IPO</span>
+            <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-[0.4em] mt-1">Version 2.0 Elite</span>
+          </div>
         </div>
         
-        <div className="hidden md:flex items-center gap-8 bg-white/5 backdrop-blur-xl px-8 py-3 rounded-full border border-white/10">
-          <Link href="#features" className="text-slate-400 hover:text-emerald-400 transition-colors text-sm font-medium">Features</Link>
-          <Link href="#security" className="text-slate-400 hover:text-emerald-400 transition-colors text-sm font-medium">Security</Link>
-          <Link href="#pricing" className="text-slate-400 hover:text-emerald-400 transition-colors text-sm font-medium">Elite Tiers</Link>
+        <div className="hidden lg:flex items-center gap-10 px-10 py-3.5 bg-white/5 backdrop-blur-xl rounded-full border border-white/10">
+          <Link href="#features" className="text-slate-400 hover:text-emerald-400 transition-colors text-xs font-bold uppercase tracking-widest">Features</Link>
+          <Link href="#security" className="text-slate-400 hover:text-emerald-400 transition-colors text-xs font-bold uppercase tracking-widest">Security</Link>
+          <Link href="#pricing" className="text-slate-400 hover:text-emerald-400 transition-colors text-xs font-bold uppercase tracking-widest">Elite Tiers</Link>
         </div>
 
-        <div className="flex items-center gap-6">
-          <Link href="/login" className="text-slate-400 hover:text-white transition-colors font-medium text-sm">Sign In</Link>
+        <div className="flex items-center gap-8">
+          <Link href="/login" className="text-slate-400 hover:text-white transition-colors font-bold text-xs uppercase tracking-widest hidden md:block">Sign In</Link>
           <Link href="/signup" className="relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-1000 group-hover:duration-200"></div>
-            <button className="relative px-6 py-2.5 bg-[#05060f] rounded-full text-sm font-semibold text-white border border-white/10 hover:border-emerald-500/50 transition-colors">
+            <div className="absolute -inset-1 bg-emerald-500 rounded-full blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+            <button className="relative px-8 py-3 bg-white text-slate-950 rounded-full text-xs font-black uppercase tracking-widest hover:bg-emerald-500 transition-colors active:scale-95">
               Get Started
             </button>
           </Link>
@@ -154,26 +157,26 @@ export default function LandingPage() {
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-12 shadow-inner"
+          className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[11px] font-black uppercase tracking-[0.3em] mb-12 shadow-2xl"
         >
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-          Elite Fintech Infrastructure
+          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+          Institutional Investment Hub
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="max-w-5xl mx-auto mb-12"
+          className="max-w-6xl mx-auto mb-16"
         >
-          <h1 className="text-6xl md:text-[100px] font-black leading-[0.85] tracking-tighter mb-8">
-            The Future of <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400 animate-gradient-x">
-              Nepalese Investing.
+          <h1 className="text-7xl md:text-[120px] font-black leading-[0.82] tracking-tighter mb-10 uppercase italic">
+            The Standard for <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-emerald-500 to-blue-500 animate-gradient-x">
+              Nepalese Markets.
             </span>
           </h1>
-          <p className="text-slate-400 text-xl md:text-2xl max-w-2xl mx-auto font-medium leading-relaxed">
-            Institutional-grade IPO management for professional investors. Secure, automated, and lightning-fast.
+          <p className="text-slate-400 text-xl md:text-2xl max-w-3xl mx-auto font-medium leading-relaxed">
+            Experience professional-grade IPO management. Automated, secure, and designed for those who demand excellence.
           </p>
         </motion.div>
 
@@ -181,102 +184,112 @@ export default function LandingPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-24"
+          className="flex flex-col sm:flex-row items-center justify-center gap-8 mb-32"
         >
-          <Link href="/signup" className="group relative px-10 py-5 bg-emerald-500 rounded-2xl font-bold text-black hover:bg-emerald-400 transition-all hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(16,_185,_129,_0.3)] flex items-center gap-2 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-            Join the Elite
+          <Link href="/signup" className="group relative px-12 py-6 bg-emerald-500 rounded-2xl font-black text-slate-950 hover:bg-emerald-400 transition-all hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(16,185,129,0.3)] flex items-center gap-3 overflow-hidden uppercase tracking-widest">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+            Enter the Suite
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
           <button 
             onClick={handleInstall}
-            className="px-10 py-5 rounded-2xl font-bold text-white border border-white/10 hover:bg-white/5 transition-all backdrop-blur-xl flex items-center gap-2 group"
+            className="px-12 py-6 rounded-2xl font-black text-white border border-white/10 hover:bg-white/5 hover:border-white/20 transition-all backdrop-blur-xl flex items-center gap-3 group uppercase tracking-widest"
           >
-            Download for Android
-            <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-black transition-colors">
-              <Activity className="w-4 h-4" />
+            Download App
+            <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-slate-950 transition-all">
+              <Zap className="w-4 h-4" />
             </div>
           </button>
         </motion.div>
 
-        {/* Dynamic Dashboard Preview */}
+        {/* Institutional Dashboard Preview */}
         <motion.div 
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 60 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 1 }}
-          className="relative max-w-6xl mx-auto"
+          className="relative max-w-7xl mx-auto"
         >
-          <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 blur-[100px] -z-10" />
-          <div className="glass-card p-2 bg-white/5 border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.5)] overflow-hidden rounded-[40px]">
-            <div className="bg-[#05060f]/90 rounded-[34px] border border-white/5 overflow-hidden aspect-[16/10] relative group">
-              <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 to-transparent pointer-events-none" />
-              <div className="h-full flex items-center justify-center">
-                <div className="text-center p-12">
-                  <div className="relative mb-8">
-                    <Activity className="w-24 h-24 text-emerald-500 mx-auto opacity-20 group-hover:scale-110 transition-transform duration-1000" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <Lock className="w-8 h-8 text-emerald-400 group-hover:animate-bounce" />
-                    </div>
-                  </div>
-                  <h3 className="text-3xl font-bold text-slate-400 mb-2">Secure Trading Core</h3>
-                  <p className="text-slate-600 font-medium">Real-time NEPSE synchronization active</p>
-                  <div className="flex gap-3 justify-center mt-8">
-                    <div className="w-12 h-1.5 rounded-full bg-emerald-500/20" />
-                    <div className="w-24 h-1.5 rounded-full bg-emerald-500/40" />
-                    <div className="w-8 h-1.5 rounded-full bg-emerald-500/10" />
-                  </div>
-                </div>
-              </div>
+          <div className="absolute -inset-4 bg-emerald-500/20 blur-[120px] -z-10" />
+          <div className="p-4 bg-white/5 border border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] overflow-hidden rounded-[50px]">
+            <div className="bg-slate-950 rounded-[40px] border border-white/5 overflow-hidden aspect-[16/9] relative group">
+              <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/10 to-transparent pointer-events-none" />
               
-              {/* Floating UI Elements */}
-              <div className="absolute top-12 left-12 p-4 glass-card border-white/10 bg-black/40 rounded-2xl animate-float">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-                    <TrendingUp className="w-4 h-4" />
-                  </div>
-                  <span className="text-sm font-bold">+12.4%</span>
+              {/* Modern Interface Mockup */}
+              <div className="h-full flex flex-col p-12 text-left">
+                <div className="flex items-center justify-between mb-12">
+                   <div className="flex gap-4">
+                      <div className="w-3 h-3 rounded-full bg-emerald-500/40" />
+                      <div className="w-3 h-3 rounded-full bg-emerald-500/20" />
+                      <div className="w-3 h-3 rounded-full bg-emerald-500/10" />
+                   </div>
+                   <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest text-emerald-500">Live Sync Active</div>
                 </div>
-                <div className="h-1 w-24 bg-slate-800 rounded-full overflow-hidden">
-                  <div className="h-full w-2/3 bg-emerald-500" />
+                
+                <div className="grid grid-cols-3 gap-8">
+                   <div className="col-span-2 space-y-8">
+                      <div className="h-48 rounded-3xl bg-white/5 border border-white/5 p-8 relative overflow-hidden">
+                         <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl" />
+                         <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">NEPSE INDEX TODAY</div>
+                         <div className="text-5xl font-black italic tracking-tighter text-white">2,807.12</div>
+                         <div className="mt-4 flex items-center gap-2 text-emerald-500 text-sm font-bold">
+                            <TrendingUp className="w-4 h-4" /> +12.4% Institutional Growth
+                         </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-8">
+                         <div className="h-32 rounded-3xl bg-white/5 border border-white/5 p-6">
+                            <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Accounts Linked</div>
+                            <div className="text-3xl font-black text-white italic">42</div>
+                         </div>
+                         <div className="h-32 rounded-3xl bg-white/5 border border-white/5 p-6">
+                            <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Bulk IPO Applied</div>
+                            <div className="text-3xl font-black text-white italic">128</div>
+                         </div>
+                      </div>
+                   </div>
+                   <div className="h-full rounded-3xl bg-white/5 border border-white/5 p-8">
+                      <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6">Market Movers</div>
+                      <div className="space-y-6">
+                         {[1,2,3,4].map(i => (
+                            <div key={i} className="flex items-center justify-between">
+                               <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10" />
+                                  <div className="h-2 w-16 bg-white/10 rounded-full" />
+                               </div>
+                               <div className="h-2 w-10 bg-emerald-500/20 rounded-full" />
+                            </div>
+                         ))}
+                      </div>
+                   </div>
                 </div>
               </div>
 
-              <div className="absolute bottom-12 right-12 p-4 glass-card border-white/10 bg-black/40 rounded-2xl animate-float-delayed">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
-                    <BarChart3 className="w-4 h-4" />
-                  </div>
-                  <span className="text-xs font-medium text-slate-400">Portfolio Health</span>
-                </div>
-                <div className="flex gap-1">
-                  {[1,2,3,4,5].map(i => <div key={i} className="w-4 h-8 rounded-sm bg-blue-500/20" style={{ height: `${20 + i*10}px` }} />)}
-                </div>
-              </div>
+              {/* Floating Effects */}
+              <div className="absolute top-20 right-20 w-64 h-64 bg-emerald-500/5 rounded-full blur-[80px] group-hover:scale-150 transition-transform duration-1000" />
             </div>
           </div>
         </motion.div>
 
-        {/* Feature Grid */}
-        <section id="features" className="py-32">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Features Section */}
+        <section id="features" className="py-48">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
               { 
                 icon: ShieldCheck, 
-                title: "AES-256 Vault", 
-                desc: "Your MeroShare credentials never leave your browser unencrypted. Bank-grade security by default.",
+                title: "Quantum Security", 
+                desc: "End-to-end encryption for your MeroShare credentials. Your data never touches our servers in plaintext.",
                 color: "emerald"
               },
               { 
                 icon: Zap, 
-                title: "One-Click Bulk Apply", 
-                desc: "Apply for IPOs for up to 50 accounts in seconds. Automated CRN and PIN management.",
+                title: "Bulk Precision", 
+                desc: "Apply for IPOs across dozens of accounts in a single click. Automated validation and PIN entry.",
                 color: "blue"
               },
               { 
                 icon: BarChart3, 
-                title: "Advanced Analytics", 
-                desc: "Real-time portfolio valuation and allotment tracking with institutional accuracy.",
+                title: "Real-time Pulse", 
+                desc: "Direct integration with NEPSE APIs for live portfolio tracking and institutional-grade analytics.",
                 color: "purple"
               }
             ].map((f, i) => (
@@ -286,82 +299,81 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative p-8 rounded-[32px] bg-white/5 border border-white/10 hover:border-emerald-500/30 transition-all"
+                className="group relative p-12 rounded-[40px] bg-white/5 border border-white/10 hover:border-emerald-500/40 transition-all duration-500 hover:shadow-2xl hover:shadow-emerald-500/5"
               >
-                <div className={`w-16 h-16 bg-${f.color}-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500`}>
-                  <f.icon className={`w-8 h-8 text-${f.color}-400`} />
+                <div className="w-20 h-20 bg-emerald-500/10 rounded-3xl flex items-center justify-center mb-10 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 border border-emerald-500/20">
+                  <f.icon className="w-10 h-10 text-emerald-400" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">{f.title}</h3>
-                <p className="text-slate-400 leading-relaxed font-medium">{f.desc}</p>
+                <h3 className="text-3xl font-black mb-6 uppercase italic tracking-tight">{f.title}</h3>
+                <p className="text-slate-400 leading-relaxed font-medium text-lg">{f.desc}</p>
               </motion.div>
             ))}
           </div>
         </section>
 
-        {/* Trust/Social Proof */}
-        <div className="py-20 border-y border-white/5">
-          <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.3em] mb-12">Trusted by 10,000+ Professional Investors</p>
-          <div className="flex flex-wrap justify-center gap-16 grayscale opacity-40">
-            {/* Branding logos would go here */}
-            <div className="text-2xl font-black italic tracking-tighter">NEPSE ALPHA</div>
-            <div className="text-2xl font-black italic tracking-tighter">SHARE SANSAR</div>
-            <div className="text-2xl font-black italic tracking-tighter">MEROSHARE</div>
-            <div className="text-2xl font-black italic tracking-tighter">CHHAINAM</div>
+        {/* Social Proof */}
+        <div className="py-24 border-y border-white/5">
+          <p className="text-xs font-black text-slate-500 uppercase tracking-[0.4em] mb-16">Preferred by Nepal's Elite Investors</p>
+          <div className="flex flex-wrap justify-center gap-20 grayscale opacity-30 hover:opacity-100 transition-opacity duration-1000">
+            <div className="text-3xl font-black italic tracking-tighter text-white">NEPSE ALPHA</div>
+            <div className="text-3xl font-black italic tracking-tighter text-white">SHARE SANSAR</div>
+            <div className="text-3xl font-black italic tracking-tighter text-white">MEROSHARE</div>
+            <div className="text-3xl font-black italic tracking-tighter text-white">HAMRO DATA</div>
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-white/5 bg-black/40 backdrop-blur-3xl py-20">
+      <footer className="relative z-10 border-t border-white/5 bg-slate-950/80 backdrop-blur-3xl py-32">
         <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-20">
-            <div className="max-w-xs">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                  <span className="text-black font-bold text-sm">H</span>
+          <div className="flex flex-col md:flex-row justify-between items-start gap-20 mb-24">
+            <div className="max-w-sm text-left">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                  <span className="text-slate-950 font-black text-lg italic">H</span>
                 </div>
-                <span className="text-sm font-black text-white uppercase tracking-widest">Hamro IPO</span>
+                <span className="text-lg font-black text-white uppercase tracking-widest italic">Hamro IPO Elite</span>
               </div>
-              <p className="text-slate-500 text-sm font-medium leading-relaxed">
-                Elevating the investment experience for the modern Nepalese generation. Built with security and performance at its core.
+              <p className="text-slate-500 text-lg font-medium leading-relaxed">
+                Elevating the investment experience for the modern generation. Built for performance, security, and absolute clarity.
               </p>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-12">
-              <div className="space-y-4">
-                <h4 className="text-white font-bold text-sm">Product</h4>
-                <ul className="space-y-2 text-slate-500 text-sm font-medium">
-                  <li><Link href="#" className="hover:text-emerald-400">Bulk Apply</Link></li>
-                  <li><Link href="#" className="hover:text-emerald-400">Result Checker</Link></li>
-                  <li><Link href="#" className="hover:text-emerald-400">Portfolio</Link></li>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-20 text-left">
+              <div className="space-y-6">
+                <h4 className="text-white font-black text-xs uppercase tracking-widest">Platform</h4>
+                <ul className="space-y-4 text-slate-500 text-sm font-bold uppercase tracking-widest">
+                  <li><Link href="#" className="hover:text-emerald-400 transition-colors">Bulk Suite</Link></li>
+                  <li><Link href="#" className="hover:text-emerald-400 transition-colors">Result Engine</Link></li>
+                  <li><Link href="#" className="hover:text-emerald-400 transition-colors">Portfolio Hub</Link></li>
                 </ul>
               </div>
-              <div className="space-y-4">
-                <h4 className="text-white font-bold text-sm">Company</h4>
-                <ul className="space-y-2 text-slate-500 text-sm font-medium">
-                  <li><Link href="#" className="hover:text-emerald-400">About Us</Link></li>
-                  <li><Link href="#" className="hover:text-emerald-400">Privacy</Link></li>
-                  <li><Link href="#" className="hover:text-emerald-400">Terms</Link></li>
+              <div className="space-y-6">
+                <h4 className="text-white font-black text-xs uppercase tracking-widest">Company</h4>
+                <ul className="space-y-4 text-slate-500 text-sm font-bold uppercase tracking-widest">
+                  <li><Link href="#" className="hover:text-emerald-400 transition-colors">About Elite</Link></li>
+                  <li><Link href="#" className="hover:text-emerald-400 transition-colors">Privacy Policy</Link></li>
+                  <li><Link href="#" className="hover:text-emerald-400 transition-colors">Terms of Access</Link></li>
                 </ul>
               </div>
-              <div className="space-y-4">
-                <h4 className="text-white font-bold text-sm">Connect</h4>
-                <ul className="space-y-2 text-slate-500 text-sm font-medium">
-                  <li><Link href="#" className="hover:text-emerald-400">Twitter</Link></li>
-                  <li><Link href="#" className="hover:text-emerald-400">Support</Link></li>
+              <div className="space-y-6">
+                <h4 className="text-white font-black text-xs uppercase tracking-widest">Global</h4>
+                <ul className="space-y-4 text-slate-500 text-sm font-bold uppercase tracking-widest">
+                  <li><Link href="#" className="hover:text-emerald-400 transition-colors">Support Center</Link></li>
+                  <li><Link href="#" className="hover:text-emerald-400 transition-colors">Elite Status</Link></li>
                 </ul>
               </div>
             </div>
           </div>
           
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-12 border-t border-white/5">
-            <p className="text-slate-600 text-xs font-bold uppercase tracking-widest">© 2026 Hamro IPO. Securely Powered by Supabase & Next Gen Logic.</p>
-            <div className="flex gap-4">
-              <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-slate-500 hover:text-white cursor-pointer hover:border-emerald-500/50 transition-colors">
-                <Activity className="w-4 h-4" />
+          <div className="flex flex-col md:flex-row justify-between items-center gap-10 pt-16 border-t border-white/5">
+            <p className="text-slate-600 text-[10px] font-black uppercase tracking-[0.3em]">© 2026 Hamro IPO Elite. Advanced Infrastructure for Nepal.</p>
+            <div className="flex gap-6">
+              <div className="w-12 h-12 rounded-2xl border border-white/10 flex items-center justify-center text-slate-500 hover:text-emerald-500 cursor-pointer hover:border-emerald-500/50 transition-all">
+                <Globe className="w-5 h-5" />
               </div>
-              <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-slate-500 hover:text-white cursor-pointer hover:border-emerald-500/50 transition-colors">
-                <Users className="w-4 h-4" />
+              <div className="w-12 h-12 rounded-2xl border border-white/10 flex items-center justify-center text-slate-500 hover:text-emerald-500 cursor-pointer hover:border-emerald-500/50 transition-all">
+                <Users className="w-5 h-5" />
               </div>
             </div>
           </div>

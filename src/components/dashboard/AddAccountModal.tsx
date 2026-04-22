@@ -172,116 +172,119 @@ export function AddAccountModal({ isOpen, onClose, initialData, onSave }: AddAcc
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 md:left-64 z-[100] flex items-center justify-center px-4 py-6">
+        <div className="fixed inset-0 md:left-72 z-[100] flex items-center justify-center px-4 py-6">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/90 backdrop-blur-xl"
+            className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm"
           />
           
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 40 }}
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 40 }}
-            className="w-full max-w-xl bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] overflow-hidden relative z-10 shadow-[0_0_100px_rgba(16,185,129,0.1)]"
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            className="w-full max-w-xl bg-white dark:bg-slate-950 border border-[var(--border)] rounded-3xl overflow-hidden relative z-10 shadow-2xl"
           >
-            {/* Background Glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-emerald-500 to-transparent opacity-50" />
-            
             {/* Header */}
-            <div className="px-10 py-10 border-b border-white/5 bg-gradient-to-b from-white/5 to-transparent flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-8 h-8 rounded-xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
-                    <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                  </div>
-                  <h2 className="text-3xl font-black tracking-tighter text-white uppercase italic">
-                    {initialData ? 'Update Account' : 'Add Demat Account'}
-                  </h2>
-                </div>
+            <div className="px-8 py-8 border-b border-[var(--border)] flex items-center justify-between">
+              <div className="space-y-1">
+                <h2 className="text-2xl font-black tracking-tight text-[var(--foreground)] uppercase italic">
+                  {initialData ? 'Update Account' : 'Add Demat Account'}
+                </h2>
                 <div className="flex items-center gap-3">
                    <div className="flex gap-1">
-                      <div className={cn("w-8 h-1.5 rounded-full transition-all duration-500", step >= 1 ? "bg-emerald-500" : "bg-white/10")} />
-                      <div className={cn("w-8 h-1.5 rounded-full transition-all duration-500", step >= 2 ? "bg-emerald-500" : "bg-white/10")} />
+                      <div className={cn("w-6 h-1 rounded-full transition-all duration-500", step >= 1 ? "bg-emerald-500" : "bg-slate-100 dark:bg-slate-800")} />
+                      <div className={cn("w-6 h-1 rounded-full transition-all duration-500", step >= 2 ? "bg-emerald-500" : "bg-slate-100 dark:bg-slate-800")} />
                    </div>
-                   <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em]">
+                   <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
                      Step {step} of 2
                    </p>
                 </div>
               </div>
               <button 
                 onClick={onClose}
-                className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl transition-all text-slate-500 border border-white/5 group"
+                className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
               >
-                <X className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-10 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
+            <form onSubmit={handleSubmit} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto no-scrollbar">
               <AnimatePresence mode="wait">
                 {step === 1 ? (
                   <motion.div
                     key="step1"
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={{ opacity: 0, x: 10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
+                    exit={{ opacity: 0, x: -10 }}
                     className="space-y-6"
                   >
                     <div className="space-y-4">
-                      <label className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 px-1">MeroShare Authentication</label>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">MeroShare Credentials</p>
                       
                       {/* DP Selection */}
-                      <div className="relative group">
-                        <Building2 className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 transition-colors group-focus-within:text-emerald-500" />
-                        <input 
-                          list="dp-modal-list"
-                          required
-                          placeholder="Select Depository Participant (DP)"
-                          value={formData.dpName}
-                          onChange={(e) => setFormData({ ...formData, dpName: e.target.value })}
-                          className="w-full bg-white/5 border border-white/5 rounded-2xl pl-14 pr-10 py-5 focus:outline-none focus:border-emerald-500/50 transition-all placeholder-slate-600 text-white font-bold"
-                        />
-                        <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-700 pointer-events-none" />
-                        <datalist id="dp-modal-list">
-                          {NEPAL_BANKS.map((dp) => (
-                            <option key={dp.id} value={`${dp.dp_code} - ${dp.name}`} />
-                          ))}
-                        </datalist>
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-bold text-slate-500 ml-1">Depository Participant</label>
+                        <div className="relative group">
+                          <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 transition-colors group-focus-within:text-emerald-500" />
+                          <input 
+                            list="dp-modal-list"
+                            required
+                            placeholder="Search your DP..."
+                            value={formData.dpName}
+                            onChange={(e) => setFormData({ ...formData, dpName: e.target.value })}
+                            className="w-full bg-slate-50 dark:bg-slate-900 border border-[var(--border)] rounded-xl pl-11 pr-10 py-3.5 focus:outline-none focus:border-emerald-500/50 transition-all placeholder-slate-400 text-sm font-bold"
+                          />
+                          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 pointer-events-none" />
+                          <datalist id="dp-modal-list">
+                            {NEPAL_BANKS.map((dp) => (
+                              <option key={dp.id} value={`${dp.dp_code} - ${dp.name}`} />
+                            ))}
+                          </datalist>
+                        </div>
                       </div>
 
-                      {/* Username */}
-                      <div className="relative group">
-                        <User className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 transition-colors group-focus-within:text-emerald-500" />
-                        <input 
-                          type="text"
-                          required
-                          placeholder="MeroShare Username (8 Digits)"
-                          value={formData.username}
-                          onChange={(e) => handleNumericInput(e, 'username', 8)}
-                          className="w-full bg-white/5 border border-white/5 rounded-2xl pl-14 pr-5 py-5 focus:outline-none focus:border-emerald-500/50 transition-all placeholder-slate-600 text-white font-bold"
-                        />
-                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {/* Username */}
+                        <div className="space-y-1.5">
+                          <label className="text-[11px] font-bold text-slate-500 ml-1">Username</label>
+                          <div className="relative group">
+                            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 transition-colors group-focus-within:text-emerald-500" />
+                            <input 
+                              type="text"
+                              required
+                              placeholder="8-digit ID"
+                              value={formData.username}
+                              onChange={(e) => handleNumericInput(e, 'username', 8)}
+                              className="w-full bg-slate-50 dark:bg-slate-900 border border-[var(--border)] rounded-xl pl-11 pr-4 py-3.5 focus:outline-none focus:border-emerald-500/50 transition-all placeholder-slate-400 text-sm font-bold"
+                            />
+                          </div>
+                        </div>
 
-                      {/* Password */}
-                      <div className="relative group">
-                        <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 transition-colors group-focus-within:text-emerald-500" />
-                        <input 
-                          type={showPassword ? "text" : "password"}
-                          required
-                          placeholder="MeroShare Password"
-                          value={formData.password}
-                          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                          className="w-full bg-white/5 border border-white/5 rounded-2xl pl-14 pr-14 py-5 focus:outline-none focus:border-emerald-500/50 transition-all placeholder-slate-600 text-white font-bold"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-600 hover:text-emerald-500 transition-colors"
-                        >
-                          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                        </button>
+                        {/* Password */}
+                        <div className="space-y-1.5">
+                          <label className="text-[11px] font-bold text-slate-500 ml-1">Password</label>
+                          <div className="relative group">
+                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 transition-colors group-focus-within:text-emerald-500" />
+                            <input 
+                              type={showPassword ? "text" : "password"}
+                              required
+                              placeholder="••••••••"
+                              value={formData.password}
+                              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                              className="w-full bg-slate-50 dark:bg-slate-900 border border-[var(--border)] rounded-xl pl-11 pr-11 py-3.5 focus:outline-none focus:border-emerald-500/50 transition-all placeholder-slate-400 text-sm font-bold"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowPassword(!showPassword)}
+                              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-500 transition-colors"
+                            >
+                              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
@@ -289,12 +292,12 @@ export function AddAccountModal({ isOpen, onClose, initialData, onSave }: AddAcc
                       type="button"
                       onClick={verifyMeroShare}
                       disabled={verifying}
-                      className="w-full bg-white text-black font-black py-6 rounded-2xl flex items-center justify-center gap-3 hover:bg-emerald-500 hover:text-black transition-all active:scale-[0.98] group"
+                      className="w-full bg-slate-950 dark:bg-emerald-500 text-white dark:text-slate-950 font-black py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-emerald-600 transition-all active:scale-[0.98] group"
                     >
-                      {verifying ? <Loader2 className="w-6 h-6 animate-spin" /> : (
+                      {verifying ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                         <>
-                          Next Step
-                          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                          Continue
+                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </>
                       )}
                     </button>
@@ -302,77 +305,89 @@ export function AddAccountModal({ isOpen, onClose, initialData, onSave }: AddAcc
                 ) : (
                   <motion.div
                     key="step2"
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={{ opacity: 0, x: 10 }}
                     animate={{ opacity: 1, x: 0 }}
                     className="space-y-6"
                   >
                     <div className="space-y-4">
-                      <label className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 px-1">Identity & Banking Info</label>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">CASBA Registration</p>
                       
                       {/* Full Name */}
-                      <div className="relative group">
-                        <User className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 transition-colors group-focus-within:text-emerald-500" />
-                        <input 
-                          type="text"
-                          required
-                          placeholder="Full Name (from MeroShare)"
-                          value={formData.fullName}
-                          onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                          className="w-full bg-white/5 border border-white/5 rounded-2xl pl-14 pr-5 py-5 focus:outline-none focus:border-emerald-500/50 transition-all placeholder-slate-600 text-white font-bold"
-                        />
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-bold text-slate-500 ml-1">Account Holder Name</label>
+                        <div className="relative group">
+                          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 transition-colors group-focus-within:text-emerald-500" />
+                          <input 
+                            type="text"
+                            required
+                            placeholder="Full Name"
+                            value={formData.fullName}
+                            onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                            className="w-full bg-slate-50 dark:bg-slate-900 border border-[var(--border)] rounded-xl pl-11 pr-4 py-3.5 focus:outline-none focus:border-emerald-500/50 transition-all placeholder-slate-400 text-sm font-bold"
+                          />
+                        </div>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {/* Bank */}
-                        <div className="relative group">
-                          <Building className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 transition-colors group-focus-within:text-emerald-500" />
-                          <input 
-                            list="bank-modal-list"
-                            required
-                            placeholder="Linked Bank"
-                            value={formData.bank}
-                            onChange={(e) => setFormData({ ...formData, bank: e.target.value })}
-                            className="w-full bg-white/5 border border-white/5 rounded-2xl pl-14 pr-5 py-5 focus:outline-none focus:border-emerald-500/50 transition-all placeholder-slate-600 text-white font-bold"
-                          />
-                          <datalist id="bank-modal-list">
-                            {CRN_BANKS.map((bank, idx) => (
-                              <option key={idx} value={bank} />
-                            ))}
-                          </datalist>
+                        <div className="space-y-1.5">
+                          <label className="text-[11px] font-bold text-slate-500 ml-1">Bank</label>
+                          <div className="relative group">
+                            <Building className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 transition-colors group-focus-within:text-emerald-500" />
+                            <input 
+                              list="bank-modal-list"
+                              required
+                              placeholder="Linked Bank"
+                              value={formData.bank}
+                              onChange={(e) => setFormData({ ...formData, bank: e.target.value })}
+                              className="w-full bg-slate-50 dark:bg-slate-900 border border-[var(--border)] rounded-xl pl-11 pr-4 py-3.5 focus:outline-none focus:border-emerald-500/50 transition-all placeholder-slate-400 text-sm font-bold"
+                            />
+                            <datalist id="bank-modal-list">
+                              {CRN_BANKS.map((bank, idx) => (
+                                <option key={idx} value={bank} />
+                              ))}
+                            </datalist>
+                          </div>
                         </div>
 
                         {/* CRN */}
-                        <div className="relative group">
-                          <Hash className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 transition-colors group-focus-within:text-emerald-500" />
-                          <input 
-                            type="text"
-                            required
-                            placeholder="CRN Number"
-                            value={formData.crnNumber}
-                            onChange={(e) => setFormData({ ...formData, crnNumber: e.target.value })}
-                            className="w-full bg-white/5 border border-white/5 rounded-2xl pl-14 pr-5 py-5 focus:outline-none focus:border-emerald-500/50 transition-all placeholder-slate-600 text-white font-bold"
-                          />
+                        <div className="space-y-1.5">
+                          <label className="text-[11px] font-bold text-slate-500 ml-1">CRN Number</label>
+                          <div className="relative group">
+                            <Hash className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 transition-colors group-focus-within:text-emerald-500" />
+                            <input 
+                              type="text"
+                              required
+                              placeholder="Bank CRN"
+                              value={formData.crnNumber}
+                              onChange={(e) => setFormData({ ...formData, crnNumber: e.target.value })}
+                              className="w-full bg-slate-50 dark:bg-slate-900 border border-[var(--border)] rounded-xl pl-11 pr-4 py-3.5 focus:outline-none focus:border-emerald-500/50 transition-all placeholder-slate-400 text-sm font-bold"
+                            />
+                          </div>
                         </div>
                       </div>
 
                       {/* Transaction PIN */}
-                      <div className="relative group">
-                        <Key className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 transition-colors group-focus-within:text-emerald-500" />
-                        <input 
-                          type={showPin ? "text" : "password"}
-                          required
-                          placeholder="4-Digit Transaction PIN"
-                          value={formData.transactionPin}
-                          onChange={(e) => handleNumericInput(e, 'transactionPin', 4)}
-                          className="w-full bg-white/5 border border-white/5 rounded-2xl pl-14 pr-14 py-5 focus:outline-none focus:border-emerald-500/50 transition-all placeholder-slate-600 text-white font-bold text-center tracking-[1em]"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPin(!showPin)}
-                          className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-600 hover:text-emerald-500 transition-colors"
-                        >
-                          {showPin ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                        </button>
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-bold text-slate-500 ml-1">4-Digit PIN</label>
+                        <div className="relative group">
+                          <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 transition-colors group-focus-within:text-emerald-500" />
+                          <input 
+                            type={showPin ? "text" : "password"}
+                            required
+                            placeholder="••••"
+                            value={formData.transactionPin}
+                            onChange={(e) => handleNumericInput(e, 'transactionPin', 4)}
+                            className="w-full bg-slate-50 dark:bg-slate-900 border border-[var(--border)] rounded-xl pl-11 pr-11 py-3.5 focus:outline-none focus:border-emerald-500/50 transition-all placeholder-slate-400 text-sm font-bold tracking-widest"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPin(!showPin)}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-500 transition-colors"
+                          >
+                            {showPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
                       </div>
                     </div>
 
@@ -380,18 +395,18 @@ export function AddAccountModal({ isOpen, onClose, initialData, onSave }: AddAcc
                       <button
                         type="button"
                         onClick={() => setStep(1)}
-                        className="flex-1 bg-white/5 border border-white/10 text-white font-black py-6 rounded-2xl hover:bg-white/10 transition-all"
+                        className="flex-1 bg-slate-50 dark:bg-slate-900 border border-[var(--border)] text-slate-600 dark:text-slate-300 font-bold py-4 rounded-xl hover:bg-slate-100 transition-all"
                       >
                         Back
                       </button>
                       <button
                         type="submit"
                         disabled={loading}
-                        className="flex-[2] bg-emerald-500 text-black font-black py-6 rounded-2xl flex items-center justify-center gap-3 hover:bg-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.3)] transition-all active:scale-[0.98]"
+                        className="flex-[2] bg-emerald-500 text-slate-950 font-black py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-emerald-600 transition-all active:scale-[0.98]"
                       >
-                        {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : (
+                        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                           <>
-                          <Check className="w-6 h-6" />
+                          <Check className="w-5 h-5" />
                           {initialData ? 'Update Account' : 'Save Account'}
                         </>
                         )}
@@ -405,5 +420,6 @@ export function AddAccountModal({ isOpen, onClose, initialData, onSave }: AddAcc
         </div>
       )}
     </AnimatePresence>
+
   )
 }

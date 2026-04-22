@@ -82,12 +82,12 @@ export default function LivePricesPage() {
         <div className="flex items-center gap-4">
           <button 
             onClick={() => router.back()}
-            className="p-3 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-all group"
+            className="p-3 bg-[var(--surface)] border border-[var(--border)] rounded-2xl hover:bg-emerald-500/10 transition-all group shadow-sm"
           >
-            <ArrowLeft className="w-6 h-6 text-slate-400 group-hover:text-white group-hover:-translate-x-1 transition-all" />
+            <ArrowLeft className="w-6 h-6 text-slate-400 group-hover:text-emerald-500 group-hover:-translate-x-1 transition-all" />
           </button>
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-white uppercase italic">Live Market</h1>
+            <h1 className="text-3xl font-black tracking-tight text-[var(--foreground)] uppercase italic">Live Market</h1>
             <div className="flex items-center gap-2 mt-1">
                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
@@ -112,7 +112,7 @@ export default function LivePricesPage() {
             <TrendingUp className="w-4 h-4" />
             <span className="text-[10px] font-black uppercase tracking-widest">Top Gainer</span>
           </div>
-          <p className="text-xl font-black text-white">{prices.reduce((prev, current) => parseFloat(prev.percentChange) > parseFloat(current.percentChange) ? prev : current, prices[0] || {}).symbol || '-'}</p>
+          <p className="text-xl font-black text-[var(--foreground)]">{prices.reduce((prev, current) => parseFloat(prev.percentChange) > parseFloat(current.percentChange) ? prev : current, prices[0] || {}).symbol || '-'}</p>
         </div>
         
         <div className="glass-card p-6 border-rose-500/20 bg-rose-500/5">
@@ -120,7 +120,7 @@ export default function LivePricesPage() {
             <TrendingDown className="w-4 h-4" />
             <span className="text-[10px] font-black uppercase tracking-widest">Top Loser</span>
           </div>
-          <p className="text-xl font-black text-white">{prices.reduce((prev, current) => parseFloat(prev.percentChange) < parseFloat(current.percentChange) ? prev : current, prices[0] || {}).symbol || '-'}</p>
+          <p className="text-xl font-black text-[var(--foreground)]">{prices.reduce((prev, current) => parseFloat(prev.percentChange) < parseFloat(current.percentChange) ? prev : current, prices[0] || {}).symbol || '-'}</p>
         </div>
 
         <div className="glass-card p-6 border-blue-500/20 bg-blue-500/5">
@@ -128,7 +128,7 @@ export default function LivePricesPage() {
             <Activity className="w-4 h-4" />
             <span className="text-[10px] font-black uppercase tracking-widest">Active Stocks</span>
           </div>
-          <p className="text-xl font-black text-white">{prices.length}</p>
+          <p className="text-xl font-black text-[var(--foreground)]">{prices.length}</p>
         </div>
       </div>
 
@@ -141,25 +141,25 @@ export default function LivePricesPage() {
             placeholder="Search symbols..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-900/50 border border-white/5 rounded-2xl pl-14 pr-5 py-4 focus:outline-none focus:border-emerald-500/50 transition-all font-bold text-sm"
+            className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-2xl pl-14 pr-5 py-4 focus:outline-none focus:border-emerald-500/50 transition-all font-bold text-[var(--foreground)] text-sm"
           />
         </div>
         <div className="flex gap-2 w-full md:w-auto">
           <button 
             onClick={() => setSortBy('symbol')}
-            className={cn("flex-1 md:flex-none px-6 py-4 rounded-2xl text-xs font-black uppercase tracking-widest border transition-all", sortBy === 'symbol' ? "bg-white text-black border-white" : "bg-white/5 text-slate-500 border-white/5")}
+            className={cn("flex-1 md:flex-none px-6 py-4 rounded-2xl text-xs font-black uppercase tracking-widest border transition-all", sortBy === 'symbol' ? "bg-emerald-500 text-slate-950 border-emerald-500" : "bg-[var(--surface)] text-slate-500 border-[var(--border)]")}
           >
             Symbol
           </button>
           <button 
             onClick={() => setSortBy('ltp')}
-            className={cn("flex-1 md:flex-none px-6 py-4 rounded-2xl text-xs font-black uppercase tracking-widest border transition-all", sortBy === 'ltp' ? "bg-white text-black border-white" : "bg-white/5 text-slate-500 border-white/5")}
+            className={cn("flex-1 md:flex-none px-6 py-4 rounded-2xl text-xs font-black uppercase tracking-widest border transition-all", sortBy === 'ltp' ? "bg-emerald-500 text-slate-950 border-emerald-500" : "bg-[var(--surface)] text-slate-500 border-[var(--border)]")}
           >
             Price
           </button>
           <button 
             onClick={() => setSortBy('change')}
-            className={cn("flex-1 md:flex-none px-6 py-4 rounded-2xl text-xs font-black uppercase tracking-widest border transition-all", sortBy === 'change' ? "bg-white text-black border-white" : "bg-white/5 text-slate-500 border-white/5")}
+            className={cn("flex-1 md:flex-none px-6 py-4 rounded-2xl text-xs font-black uppercase tracking-widest border transition-all", sortBy === 'change' ? "bg-emerald-500 text-slate-950 border-emerald-500" : "bg-[var(--surface)] text-slate-500 border-[var(--border)]")}
           >
             % Change
           </button>
@@ -167,11 +167,11 @@ export default function LivePricesPage() {
       </div>
 
       {/* Prices Table */}
-      <div className="glass-card overflow-hidden border-white/5 bg-slate-900/20 backdrop-blur-xl rounded-[2rem]">
+      <div className="glass-card overflow-hidden border-[var(--border)] bg-[var(--surface)] backdrop-blur-xl rounded-[2rem]">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-white/5 bg-white/5">
+              <tr className="border-b border-[var(--border)] bg-[var(--surface-alt)]/50">
                 <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Symbol</th>
                 <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">LTP (Rs.)</th>
                 <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Change</th>
@@ -182,11 +182,11 @@ export default function LivePricesPage() {
               <AnimatePresence mode="popLayout">
                 {loading ? (
                   Array.from({ length: 10 }).map((_, i) => (
-                    <tr key={`skeleton-${i}`} className="border-b border-white/5 animate-pulse">
-                      <td className="px-8 py-6"><div className="w-16 h-4 bg-white/5 rounded" /></td>
-                      <td className="px-8 py-6"><div className="w-20 h-4 bg-white/5 rounded" /></td>
-                      <td className="px-8 py-6"><div className="w-12 h-4 bg-white/5 rounded" /></td>
-                      <td className="px-8 py-6"><div className="w-24 h-4 bg-white/5 rounded float-right" /></td>
+                    <tr key={`skeleton-${i}`} className="border-b border-[var(--border)] animate-pulse">
+                      <td className="px-8 py-6"><div className="w-16 h-4 bg-[var(--surface-alt)] rounded" /></td>
+                      <td className="px-8 py-6"><div className="w-20 h-4 bg-[var(--surface-alt)] rounded" /></td>
+                      <td className="px-8 py-6"><div className="w-12 h-4 bg-[var(--surface-alt)] rounded" /></td>
+                      <td className="px-8 py-6"><div className="w-24 h-4 bg-[var(--surface-alt)] rounded float-right" /></td>
                     </tr>
                   ))
                 ) : filteredPrices.map((stock, idx) => (
@@ -204,10 +204,10 @@ export default function LivePricesPage() {
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-3">
                          <div className={cn("w-1 h-6 rounded-full", stock.change.includes('+') ? "bg-emerald-500" : "bg-rose-500")} />
-                         <span className="font-black text-white group-hover:text-emerald-500 transition-colors">{stock.symbol}</span>
+                         <span className="font-black text-[var(--foreground)] group-hover:text-emerald-500 transition-colors uppercase italic">{stock.symbol}</span>
                       </div>
                     </td>
-                    <td className="px-8 py-6 font-mono text-white font-bold">{stock.ltp}</td>
+                    <td className="px-8 py-6 font-mono text-[var(--foreground)] font-bold">{stock.ltp}</td>
                     <td className="px-8 py-6">
                       <div className={cn(
                         "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-tighter uppercase",

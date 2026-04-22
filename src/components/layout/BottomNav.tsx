@@ -24,35 +24,42 @@ export function BottomNav() {
   const pathname = usePathname()
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden nav-blur px-4 pb-6 pt-3">
-      <div className="flex items-center justify-between max-w-lg mx-auto">
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:hidden w-[92%] max-w-md">
+      <nav className="bg-white/80 dark:bg-slate-950/80 backdrop-blur-2xl border border-[var(--border)] px-4 py-3 rounded-[32px] shadow-2xl shadow-black/10 flex items-center justify-between relative overflow-hidden">
+        {/* Active Background Glow */}
+        <div className="absolute inset-0 bg-gradient-to-t from-emerald-500/5 to-transparent pointer-events-none" />
+
         {navItems.map((item) => {
           const isActive = pathname === item.path
           return (
-            <Link key={item.path} href={item.path} className="relative px-4 py-2 flex flex-col items-center gap-1.5 group">
+            <Link key={item.path} href={item.path} className="relative flex-1 flex flex-col items-center gap-1.5 group outline-none">
               <div className={cn(
-                "transition-all duration-500",
-                isActive ? "text-emerald-400 scale-125 drop-shadow-[0_0_10px_rgba(0,255,159,0.6)]" : "text-slate-500 group-hover:text-slate-300"
+                "p-2.5 rounded-2xl transition-all duration-500",
+                isActive 
+                  ? "bg-slate-950 dark:bg-emerald-500 text-white dark:text-slate-950 scale-110 shadow-lg shadow-emerald-500/20" 
+                  : "text-slate-400 group-hover:text-slate-950 dark:group-hover:text-slate-200"
               )}>
-                <item.icon className="w-6 h-6" />
+                <item.icon className="w-5 h-5" />
               </div>
               <span className={cn(
-                "text-[10px] font-black uppercase tracking-widest transition-all duration-500",
-                isActive ? "text-emerald-400 opacity-100" : "text-slate-500 group-hover:text-slate-300 opacity-60"
+                "text-[8px] font-black uppercase tracking-widest transition-all duration-300",
+                isActive ? "text-slate-900 dark:text-emerald-400 scale-105" : "text-slate-500 opacity-60"
               )}>
                 {item.name}
               </span>
               
               {isActive && (
                 <motion.div 
-                  layoutId="active-tab"
-                  className="absolute -top-3 left-1/2 -translate-x-1/2 w-14 h-1.5 bg-emerald-400 rounded-full shadow-[0_-5px_20px_rgba(0,255,159,0.8)]"
+                  layoutId="bottom-indicator-elite"
+                  className="absolute -bottom-1 w-1 h-1 bg-emerald-500 rounded-full"
                 />
               )}
             </Link>
           )
         })}
-      </div>
-    </nav>
+      </nav>
+    </div>
+
   )
 }
+

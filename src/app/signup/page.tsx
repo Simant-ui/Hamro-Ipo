@@ -80,22 +80,22 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-slate-950">
       {/* Background Orbs */}
-      <div className="absolute top-0 -left-4 w-72 h-72 bg-emerald-600/10 rounded-full blur-[128px]" />
-      <div className="absolute bottom-0 -right-4 w-72 h-72 bg-teal-600/10 rounded-full blur-[128px]" />
+      <div className="absolute top-0 -left-4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[128px] animate-pulse" />
+      <div className="absolute bottom-0 -right-4 w-96 h-96 bg-blue-500/10 rounded-full blur-[128px]" />
 
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-md glass-card p-8 shadow-2xl z-10 border border-white/5 bg-slate-900/50 backdrop-blur-xl rounded-3xl"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-md p-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl z-10"
       >
-        <div className="text-center mb-8">
-          <div className="w-20 h-20 mx-auto mb-4 rounded-3xl overflow-hidden shadow-2xl shadow-emerald-500/20 border border-white/10 bg-slate-900 flex items-center justify-center">
-             <ShieldCheck className="w-10 h-10 text-emerald-500" />
+        <div className="text-center mb-10">
+          <div className="w-16 h-16 mx-auto mb-6 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20 rotate-3 transition-transform">
+             <ShieldCheck className="w-8 h-8 text-slate-950" />
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tight uppercase">
+          <h1 className="text-3xl font-black text-slate-950 dark:text-white tracking-tight uppercase italic">
             {step === 'details' ? 'Create Account' : 'Verify Email'}
           </h1>
-          <p className="text-slate-400 text-xs font-bold tracking-widest mt-2 uppercase">
+          <p className="text-sm text-slate-500 font-medium mt-1">
             {step === 'details' ? 'Start your investment journey' : `Enter code sent to ${email}`}
           </p>
         </div>
@@ -104,53 +104,53 @@ export default function SignupPage() {
           {step === 'details' ? (
             <motion.form 
               key="details"
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
+              exit={{ opacity: 0, x: 10 }}
               onSubmit={handleSendOTP} 
-              className="space-y-4"
+              className="space-y-5"
             >
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-300 ml-1">Full Name</label>
-                <div className="relative">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 pointer-events-none" />
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-500 ml-1 uppercase tracking-widest">Full Name</label>
+                <div className="relative group">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
                   <input
                     type="text"
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    placeholder="John Doe"
-                    className="w-full bg-slate-950/50 border border-white/10 text-white pl-12 pr-4 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500/50 transition-all placeholder:text-slate-600"
+                    placeholder="Institutional Name"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-950 dark:text-white pl-11 pr-4 py-3.5 rounded-xl focus:outline-none focus:border-emerald-500/50 transition-all placeholder:text-slate-400 text-sm font-medium"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-300 ml-1">Email Address</label>
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 pointer-events-none" />
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-500 ml-1 uppercase tracking-widest">Email Address</label>
+                <div className="relative group">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="email@example.com"
-                    className="w-full bg-slate-950/50 border border-white/10 text-white pl-12 pr-4 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500/50 transition-all placeholder:text-slate-600"
+                    placeholder="name@company.com"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-950 dark:text-white pl-11 pr-4 py-3.5 rounded-xl focus:outline-none focus:border-emerald-500/50 transition-all placeholder:text-slate-400 text-sm font-medium"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-300 ml-1">Password</label>
-                <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 pointer-events-none" />
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-500 ml-1 uppercase tracking-widest">Password</label>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
                   <input
                     type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full bg-slate-950/50 border border-white/10 text-white pl-12 pr-4 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500/50 transition-all placeholder:text-slate-600"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-950 dark:text-white pl-11 pr-4 py-3.5 rounded-xl focus:outline-none focus:border-emerald-500/50 transition-all placeholder:text-slate-400 text-sm font-medium"
                   />
                 </div>
               </div>
@@ -158,12 +158,12 @@ export default function SignupPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 rounded-2xl transition-all shadow-lg shadow-emerald-900/20 flex items-center justify-center gap-2 mt-6 uppercase tracking-widest disabled:opacity-50"
+                className="w-full bg-emerald-500 text-slate-950 font-black py-4 rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 mt-6 uppercase tracking-widest disabled:opacity-50 hover:bg-emerald-600 active:scale-[0.98]"
               >
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                   <>
-                    Continue
-                    <ArrowRight className="w-5 h-5" />
+                    Continue Registration
+                    <ArrowRight className="w-4 h-4" />
                   </>
                 )}
               </button>
@@ -171,14 +171,14 @@ export default function SignupPage() {
           ) : (
             <motion.form 
               key="otp"
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
+              exit={{ opacity: 0, x: -10 }}
               onSubmit={handleVerifyAndSignup} 
-              className="space-y-6"
+              className="space-y-8"
             >
-              <div className="space-y-2 text-center">
-                <label className="text-sm font-medium text-slate-300">Enter Verification Code</label>
+              <div className="space-y-4 text-center">
+                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Security Verification</label>
                 <div className="flex justify-center">
                   <input
                     type="text"
@@ -187,21 +187,21 @@ export default function SignupPage() {
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                     placeholder="000000"
-                    className="w-48 text-center text-3xl font-black bg-slate-950/50 border border-white/10 text-emerald-500 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500/50 transition-all tracking-[0.5em] placeholder:text-slate-800"
+                    className="w-48 text-center text-3xl font-black bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-emerald-600 dark:text-emerald-500 py-5 rounded-2xl focus:outline-none focus:border-emerald-500/50 transition-all tracking-[0.4em] placeholder:text-slate-200 dark:placeholder:text-slate-800"
                   />
                 </div>
               </div>
 
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-4">
                 <button
                   type="submit"
                   disabled={loading || otp.length !== 6}
-                  className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 rounded-2xl transition-all shadow-lg shadow-emerald-900/20 flex items-center justify-center gap-2 uppercase tracking-widest disabled:opacity-50"
+                  className="w-full bg-emerald-500 text-slate-950 font-black py-4 rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 uppercase tracking-widest disabled:opacity-50 hover:bg-emerald-600 active:scale-[0.98]"
                 >
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                     <>
-                      Verify & Register
-                      <ShieldCheck className="w-5 h-5" />
+                      Verify & Activate
+                      <CheckCircle2 className="w-5 h-5" />
                     </>
                   )}
                 </button>
@@ -209,23 +209,24 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={() => setStep('details')}
-                  className="w-full py-3 text-slate-400 hover:text-white font-bold text-sm transition-colors flex items-center justify-center gap-2 uppercase tracking-widest"
+                  className="w-full py-2 text-slate-500 hover:text-emerald-600 font-bold text-[11px] transition-colors flex items-center justify-center gap-2 uppercase tracking-widest"
                 >
-                  <ArrowLeft className="w-4 h-4" />
-                  Back to Details
+                  <ArrowLeft className="w-3 h-3" />
+                  Modify Details
                 </button>
               </div>
             </motion.form>
           )}
         </AnimatePresence>
 
-        <p className="text-center mt-8 text-slate-400 text-sm">
-          Already have an account?{' '}
-          <Link href="/login" className="text-emerald-500 hover:text-emerald-400 font-bold transition-colors">
+        <p className="text-center mt-10 text-slate-500 text-[11px] font-bold uppercase tracking-widest">
+          Existing member?{' '}
+          <Link href="/login" className="text-emerald-600 hover:text-emerald-500 transition-colors">
             Sign In
           </Link>
         </p>
       </motion.div>
     </div>
+
   )
 }

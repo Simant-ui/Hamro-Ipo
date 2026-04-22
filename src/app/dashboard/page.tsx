@@ -170,320 +170,269 @@ export default function DashboardPage() {
   if (!mounted || !hasHydrated) return null
 
   return (
-    <div className="space-y-8 pb-20 px-4 md:px-0">
-      {/* NEPSE Index Card */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="glass-card p-8 md:p-10 group hover:border-emerald-500/40 transition-all duration-700 relative overflow-hidden bg-[var(--surface)] shadow-xl dark:shadow-[0_0_50px_-20px_rgba(16,185,129,0.15)] border-[var(--glass-border)]"
-      >
-        <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none group-hover:bg-emerald-500/15 transition-all duration-700" />
-        
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 relative z-10">
-          <div className="flex-1">
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-4">
-                <div className={cn("px-4 py-1.5 rounded-full border flex items-center gap-2 jakarta transition-all duration-500 shadow-sm", market.color)}>
-                  <div className={cn("w-2 h-2 rounded-full animate-pulse", market.status === 'Open' ? 'bg-emerald-500' : market.status === 'Pre-Open' ? 'bg-amber-500' : 'bg-red-500')} />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Market {market.status}</span>
-                </div>
-                <div className="flex items-center gap-2 px-4 py-1.5 bg-black/40 rounded-full border border-white/10 jakarta text-slate-400">
-                  <Clock className="w-3.5 h-3.5" />
-                  <span className="text-[11px] font-bold tabular-nums tracking-wider">{timeString} (NPT)</span>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <button 
-                  onClick={fetchData}
-                  disabled={isRefreshing}
-                  className={cn(
-                    "p-2.5 bg-emerald-500/10 rounded-xl text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 dark:border-emerald-500/10 hover:bg-emerald-500/20 transition-all",
-                    isRefreshing && "animate-spin"
-                  )}
-                >
-                  <RefreshCw className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <h1 className="text-6xl md:text-7xl font-black text-[var(--foreground)] tracking-tighter leading-none jakarta">
-                {marketData?.nepseIndex || '2,838.40'}
-              </h1>
-              <div className="flex items-center gap-4 pt-4">
-                <div className={cn(
-                  "flex items-center gap-1.5 px-3 py-1 rounded-full border jakarta",
-                  marketData?.change?.includes('+') ? "bg-emerald-500/10 dark:bg-emerald-500/20 border-emerald-500/20" : "bg-red-500/10 dark:bg-red-500/20 border-red-500/20"
-                )}>
-                  <TrendingUp className={cn("w-4 h-4", marketData?.change?.includes('+') ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400")} />
-                  <span className={cn("text-sm font-black", marketData?.change?.includes('+') ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400")}>
-                    {marketData ? `${marketData.change} (${marketData.percentChange}%)` : '+5.36 (0.18%)'}
-                  </span>
-                </div>
-                <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest jakarta">NEPSE Index Today</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-8 mt-10 pt-8 border-t border-white/5">
-              <div>
-                <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1 jakarta">Market Turnover</p>
-                <p className="text-lg font-black text-slate-700 dark:text-slate-300 jakarta">Rs. {marketData?.turnover || '5.77 Arba'}</p>
-              </div>
-              <div>
-                <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1 jakarta">Today's Point Change</p>
-                <p className={cn(
-                  "text-lg font-black jakarta",
-                  marketData?.change?.includes('+') ? "text-emerald-500" : "text-rose-500"
-                )}>
-                  {marketData?.change || '+5.36'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:w-[55%] h-[240px] min-h-[240px] relative">
-            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
-              <AreaChart data={mockNepseData}>
-                <defs>
-                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="8 8" stroke="currentColor" vertical={false} strokeOpacity={0.05} />
-                <XAxis dataKey="time" hide />
-                <YAxis hide domain={['dataMin - 10', 'dataMax + 10']} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'var(--surface)', 
-                    backdropFilter: 'blur(20px)',
-                    border: '1px solid var(--border)', 
-                    borderRadius: '20px', 
-                    fontSize: '12px',
-                    fontWeight: '900',
-                    boxShadow: 'var(--card-shadow)'
-                  }}
-                  itemStyle={{ color: '#10b981' }}
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke="#10b981" 
-                  strokeWidth={4}
-                  fillOpacity={1} 
-                  fill="url(#colorValue)" 
-                  animationDuration={2500}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-            <div className="absolute bottom-0 right-0 flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-              <Clock className="w-3 h-3" /> Updated 1 min ago
-            </div>
-          </div>
-        </div>
-      </motion.div>
-      
-      {/* Sub-Indices Ticker */}
-      <div className="flex overflow-x-auto gap-4 no-scrollbar pb-2 px-2">
-        {(subIndices.length > 0 ? subIndices : [
-          { name: 'Banking', value: '1,459.49', percentChange: '-0.84' },
-          { name: 'Hotels', value: '8,360.91', percentChange: '+1.01' },
-          { name: 'Hydro', value: '4,085.03', percentChange: '-0.23' },
-          { name: 'Finance', value: '2,434.03', percentChange: '-0.70' },
-          { name: 'Insurance', value: '12,693.38', percentChange: '-0.62' },
-        ]).map((sub, idx) => (
-          <motion.div
-            key={idx}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: idx * 0.05 }}
-            className="flex-shrink-0 p-4 rounded-2xl bg-[var(--surface)] border border-white/5 shadow-sm min-w-[160px] group hover:border-emerald-500/20 transition-all"
-          >
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 jakarta">{sub.name}</p>
-            <div className="flex items-center justify-between gap-4">
-              <span className="text-sm font-black text-[var(--foreground)] jakarta">{sub.value}</span>
-              <span className={cn(
-                "text-[10px] font-black jakarta px-1.5 py-0.5 rounded-md",
-                sub.percentChange?.includes('+') ? "text-emerald-500 bg-emerald-500/10" : "text-red-500 bg-red-500/10"
-              )}>
-                {sub.percentChange}%
-              </span>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Live LTP Ticker */}
-      {livePrices.length > 0 && (
-        <div className="bg-emerald-500/10 border-y border-emerald-500/20 py-2 overflow-hidden relative">
-          <motion.div 
-            animate={{ x: [0, -2000] }}
-            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            className="flex whitespace-nowrap gap-8"
-          >
-            {livePrices.map((price, idx) => (
-              <div key={idx} className="flex items-center gap-2">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{price.symbol}</span>
-                <span className="text-xs font-black text-white">{price.ltp}</span>
-                <span className={cn(
-                  "text-[10px] font-bold",
-                  price.change?.includes('+') ? "text-emerald-500" : "text-rose-500"
-                )}>
-                  {price.change} ({price.percentChange}%)
-                </span>
-              </div>
-            ))}
-            {/* Duplicate for seamless loop */}
-            {livePrices.map((price, idx) => (
-              <div key={`dup-${idx}`} className="flex items-center gap-2">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{price.symbol}</span>
-                <span className="text-xs font-black text-white">{price.ltp}</span>
-                <span className={cn(
-                  "text-[10px] font-bold",
-                  price.change?.includes('+') ? "text-emerald-500" : "text-rose-500"
-                )}>
-                  {price.change} ({price.percentChange}%)
-                </span>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      )}
-
-      {/* Account List Header */}
-      <div className="flex items-center justify-between px-2">
-        <div className="flex items-center gap-4">
-           <div className="w-2 h-8 bg-emerald-500 rounded-full shadow-[0_0_15px_rgba(0,255,159,0.5)]" />
-           <h2 className="text-3xl font-black tracking-tighter uppercase text-[var(--foreground)] jakarta">
-             Portfolio Accounts 
-             <span className="text-emerald-600 dark:text-emerald-400 ml-4 bg-emerald-500/10 px-4 py-1 rounded-xl border border-emerald-500/20 text-sm shadow-inner jakarta">{accounts.length}</span>
-           </h2>
+    <div className="space-y-10 pb-20 px-4 md:px-0">
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-black tracking-tight text-[var(--foreground)] uppercase italic">Market Overview</h1>
+          <p className="text-sm text-slate-500 font-medium">Real-time Nepalese Stock Market insights and your portfolio.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="p-3.5 rounded-2xl bg-[var(--surface)] text-slate-400 hover:text-emerald-500 border border-white/5 transition-all shadow-lg backdrop-blur-md">
-            <Search className="w-5 h-5" />
-          </button>
-          <button className="p-3.5 rounded-2xl bg-[var(--surface)] text-slate-400 hover:text-emerald-500 border border-white/5 transition-all shadow-lg backdrop-blur-md">
-            <Settings className="w-5 h-5" />
+          <div className={cn("px-4 py-2 rounded-xl border flex items-center gap-2 shadow-sm transition-all duration-300", 
+            market.status === 'Open' 
+              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600' 
+              : 'bg-rose-500/10 border-rose-500/20 text-rose-600'
+          )}>
+            <div className={cn("w-2 h-2 rounded-full", market.status === 'Open' ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500')} />
+            <span className="text-[10px] font-black uppercase tracking-widest">Market {market.status}</span>
+          </div>
+          <button 
+            onClick={fetchData}
+            className="p-2.5 bg-white dark:bg-slate-900 border border-[var(--border)] rounded-xl text-slate-500 hover:text-emerald-500 transition-all shadow-sm"
+          >
+            <RefreshCw className={cn("w-4 h-4", isRefreshing && "animate-spin")} />
           </button>
         </div>
       </div>
 
-      {/* Account Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {filteredAccounts.map((account, idx) => (
-          <motion.div
-            key={account.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.1 }}
-            className="glass-card p-8 group hover:-translate-y-2 transition-all duration-500 bg-[var(--surface)] border-white/5 shadow-xl dark:shadow-none"
-          >
-            <div className="flex items-start justify-between mb-8">
-              <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-[0_0_20px_rgba(0,255,159,0.1)] group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
-                <UserCircle className="w-9 h-9" />
+      {/* Main Stats Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* NEPSE Main Card */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="lg:col-span-2 glass-card p-8 md:p-10 bg-[var(--surface)]"
+        >
+          <div className="flex flex-col md:flex-row justify-between gap-10">
+            <div className="flex-1 space-y-6">
+              <div>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Nepalese Stock Exchange</p>
+                <div className="flex items-baseline gap-3">
+                  <h2 className="text-5xl md:text-6xl font-black text-[var(--foreground)] tracking-tighter">
+                    {marketData?.nepseIndex || '2,838.40'}
+                  </h2>
+                  <div className={cn(
+                    "flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-bold",
+                    marketData?.change?.includes('+') ? "text-emerald-500 bg-emerald-500/10" : "text-rose-500 bg-rose-500/10"
+                  )}>
+                    {marketData?.change || '+5.36'}
+                  </div>
+                </div>
+                <p className="text-sm font-semibold text-slate-500 mt-2">
+                   Last updated at {timeString} (NPT)
+                </p>
               </div>
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => { setEditingAccount(account); setIsAddModalOpen(true); }}
-                  className="p-3 rounded-xl bg-black/40 text-slate-400 hover:text-emerald-500 hover:bg-emerald-500/10 transition-all border border-white/5"
-                >
-                  <Edit3 className="w-5 h-5" />
-                </button>
-                <button 
-                  onClick={() => { deleteAccount(account.id); toast.success(`${account.name} deleted!`); }}
-                  className="p-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-all border border-slate-200 dark:border-white/5"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
+
+              <div className="grid grid-cols-2 gap-8 pt-6 border-t border-[var(--border)]">
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Turnover</p>
+                  <p className="text-xl font-black text-[var(--foreground)]">Rs. {marketData?.turnover || '5.77'}<span className="text-sm ml-1 text-slate-500 font-bold">Arba</span></p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Percent Change</p>
+                  <p className={cn(
+                    "text-xl font-black",
+                    marketData?.change?.includes('+') ? "text-emerald-500" : "text-rose-500"
+                  )}>
+                    {marketData?.percentChange || '0.18'}%
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-2xl font-black text-[var(--foreground)] tracking-tight truncate group-hover:text-emerald-500 transition-colors jakarta">{account.name}</h3>
-                <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-black uppercase tracking-[0.3em] mt-1 opacity-80 jakarta">{account.bank} • ID: {account.username}</p>
-              </div>
+            <div className="flex-1 h-[200px] min-w-[200px] relative">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={mockNepseData}>
+                  <defs>
+                    <linearGradient id="nepseGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.2}/>
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'var(--surface)', 
+                      borderRadius: '12px', 
+                      border: '1px border var(--border)',
+                      boxShadow: 'var(--card-shadow)'
+                    }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="value" 
+                    stroke="#10b981" 
+                    strokeWidth={3}
+                    fill="url(#nepseGradient)" 
+                    animationDuration={2000}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </motion.div>
 
-              <div className="p-5 rounded-2xl bg-black/40 border border-white/5 group-hover:border-emerald-500/20 transition-all">
-                <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 jakarta">MeroShare ID</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xl font-black text-emerald-500 tracking-[0.2em] jakarta">{account.username}</span>
-                  <button onClick={() => copyToClipboard(account.boid)} className="p-2 text-slate-400 hover:text-emerald-500 transition-colors">
-                    <Copy className="w-4 h-4" />
+        {/* Quick Stats / Sub-Indices */}
+        <div className="grid grid-cols-1 gap-4">
+          {(subIndices.length > 0 ? subIndices.slice(0, 4) : [
+            { name: 'Banking', value: '1,459.49', percentChange: '-0.84' },
+            { name: 'Hotels', value: '8,360.91', percentChange: '+1.01' },
+            { name: 'Hydro', value: '4,085.03', percentChange: '-0.23' },
+            { name: 'Insurance', value: '12,693.38', percentChange: '-0.62' },
+          ]).map((sub, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: idx * 0.05 }}
+              className="p-5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-sm group hover:border-emerald-500/20 transition-all"
+            >
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">{sub.name}</p>
+                  <p className="text-base font-black text-[var(--foreground)] tracking-tight">{sub.value}</p>
+                </div>
+                <span className={cn(
+                  "text-[10px] font-bold px-2 py-0.5 rounded-md",
+                  sub.percentChange?.includes('+') ? "text-emerald-600 bg-emerald-500/10" : "text-rose-600 bg-rose-500/10"
+                )}>
+                  {sub.percentChange}%
+                </span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Account Section */}
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+             <div className="w-1.5 h-6 bg-emerald-500 rounded-full" />
+             <h2 className="text-2xl font-black tracking-tight text-[var(--foreground)] uppercase italic">Your Accounts</h2>
+             <span className="text-xs font-bold bg-slate-100 dark:bg-slate-900 px-3 py-1 rounded-full border border-[var(--border)] text-slate-500">{accounts.length} Total</span>
+          </div>
+          <button 
+            onClick={() => { setEditingAccount(null); setIsAddModalOpen(true); }}
+            className="premium-btn premium-btn-primary"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="hidden sm:inline">Add New Account</span>
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredAccounts.map((account, idx) => (
+            <motion.div
+              key={account.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: idx * 0.1 }}
+              className="p-6 rounded-3xl bg-[var(--surface)] border border-[var(--border)] shadow-sm hover:shadow-md hover:border-emerald-500/20 transition-all group"
+            >
+              <div className="flex justify-between items-start mb-6">
+                <div className="w-12 h-12 rounded-xl bg-[var(--surface-alt)] flex items-center justify-center text-slate-400 group-hover:text-emerald-500 group-hover:bg-emerald-500/10 transition-all border border-[var(--border)]">
+                  <UserCircle className="w-7 h-7" />
+                </div>
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button 
+                    onClick={() => { setEditingAccount(account); setIsAddModalOpen(true); }}
+                    className="p-2 text-slate-400 hover:text-emerald-500 transition-colors"
+                  >
+                    <Edit3 className="w-4 h-4" />
+                  </button>
+                  <button 
+                    onClick={() => { deleteAccount(account.id); toast.success('Account removed'); }}
+                    className="p-2 text-slate-400 hover:text-rose-500 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-2">
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest jakarta">BOID</span>
-                  <span className="text-xs font-black text-slate-500 dark:text-slate-400 mt-1 jakarta">{account.boid}</span>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-black text-[var(--foreground)] tracking-tight group-hover:text-emerald-500 transition-colors">{account.name}</h3>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{account.bank}</p>
                 </div>
-                <div className="w-10 h-10 rounded-full border-2 border-emerald-500/30 flex items-center justify-center bg-emerald-500/5 group-hover:bg-emerald-500/10 transition-all shadow-inner">
-                  <Check className="w-5 h-5 text-emerald-500" />
+
+                <div className="p-4 rounded-2xl bg-[var(--surface-alt)] border border-[var(--border)] flex justify-between items-center">
+                  <div>
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">MeroShare ID</p>
+                    <p className="text-base font-black text-[var(--foreground)] tracking-widest">{account.username}</p>
+                  </div>
+                  <button onClick={() => copyToClipboard(account.boid)} className="p-2 text-slate-400 hover:text-emerald-500 transition-colors">
+                    <Copy className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between pt-2">
+                   <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Active Status</span>
+                   </div>
+                   <Check className="w-4 h-4 text-emerald-500" />
                 </div>
               </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Live Market Section */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between px-2">
-          <div className="flex items-center gap-4">
-            <div className="w-2 h-8 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
-            <h2 className="text-3xl font-black tracking-tighter uppercase text-[var(--foreground)] jakarta">Live Market Prices</h2>
-          </div>
-          <Link href="/dashboard/live-prices" className="group flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-xl hover:bg-blue-500/20 transition-all">
-            <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest">View All Market</span>
-            <ArrowUpRight className="w-4 h-4 text-blue-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {livePrices.length > 0 ? (
-            livePrices.slice(0, 8).map((price, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: idx * 0.05 }}
-                className="glass-card p-5 bg-[var(--surface)] border-white/5 flex flex-col gap-3 group hover:border-blue-500/30 transition-all cursor-pointer"
-                onClick={() => {
-                  setSelectedSymbol(price.symbol)
-                  setIsStockModalOpen(true)
-                }}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-black text-blue-500 jakarta">{price.symbol}</span>
-                  <span className={cn(
-                    "text-[10px] font-black px-2 py-0.5 rounded-md",
-                    price.change?.includes('+') ? "text-emerald-500 bg-emerald-500/10" : "text-rose-500 bg-rose-500/10"
-                  )}>
-                    {price.percentChange}%
-                  </span>
-                </div>
-                <div className="flex items-end justify-between">
-                  <div>
-                    <p className="text-xs font-black text-white jakarta">Rs. {price.ltp}</p>
-                    <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">LTP</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] font-bold text-slate-400">Vol: {price.volume}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))
-          ) : (
-            [1, 2, 3, 4].map(i => (
-              <div key={i} className="glass-card p-5 animate-pulse bg-black/20 border-white/5 h-24" />
-            ))
+            </motion.div>
+          ))}
+          {accounts.length === 0 && (
+             <div 
+               onClick={() => setIsAddModalOpen(true)}
+               className="md:col-span-2 lg:col-span-3 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl p-12 flex flex-col items-center justify-center gap-4 hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all cursor-pointer group"
+             >
+               <div className="p-4 bg-slate-100 dark:bg-slate-900 rounded-2xl group-hover:bg-emerald-500/20 group-hover:scale-110 transition-all">
+                 <Plus className="w-8 h-8 text-slate-400 group-hover:text-emerald-500" />
+               </div>
+               <p className="text-sm font-bold text-slate-400 group-hover:text-emerald-500 transition-colors">Add your first Demat Account to get started</p>
+             </div>
           )}
         </div>
       </div>
 
+      {/* Market Prices */}
+      <div className="space-y-6">
+        <div className="flex items-center justify-between px-2">
+          <div className="flex items-center gap-3">
+             <div className="w-1.5 h-6 bg-blue-500 rounded-full" />
+             <h2 className="text-2xl font-black tracking-tight text-[var(--foreground)] uppercase italic">Live Prices</h2>
+          </div>
+          <Link href="/dashboard/live-prices" className="text-xs font-bold text-blue-500 hover:underline flex items-center gap-1">
+            View Market Board <ChevronRight className="w-3 h-3" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          {(livePrices.length > 0 ? livePrices.slice(0, 12) : [1,2,3,4,5,6]).map((price: any, idx) => (
+            <motion.div
+              key={idx}
+              className="p-4 rounded-2xl bg-[var(--surface)] border border-[var(--border)] group hover:border-blue-500/20 transition-all cursor-pointer"
+              onClick={() => {
+                if (price.symbol) {
+                  setSelectedSymbol(price.symbol)
+                  setIsStockModalOpen(true)
+                }
+              }}
+            >
+              {price.symbol ? (
+                <>
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="text-[10px] font-black text-blue-500 uppercase tracking-tight">{price.symbol}</span>
+                    <span className={cn(
+                      "text-[9px] font-bold px-1.5 py-0.5 rounded",
+                      price.change?.includes('+') ? "text-emerald-600 bg-emerald-500/10" : "text-rose-600 bg-rose-500/10"
+                    )}>
+                      {price.percentChange}%
+                    </span>
+                  </div>
+                  <p className="text-sm font-black text-[var(--foreground)]">Rs. {price.ltp}</p>
+                </>
+              ) : (
+                <div className="h-10 animate-pulse bg-slate-100 dark:bg-slate-800 rounded-lg" />
+              )}
+            </motion.div>
+          ))}
+        </div>
+      </div>
       {/* Upcoming IPOs Section */}
       <div className="space-y-6">
         <div className="flex items-center justify-between px-2">
@@ -505,7 +454,7 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.1 }}
-                className="glass-card p-6 bg-[var(--surface)] border-white/5 flex items-center justify-between group hover:border-amber-500/30 transition-all cursor-pointer"
+                className="glass-card p-6 bg-[var(--surface)] border-[var(--border)] flex items-center justify-between group hover:border-amber-500/30 transition-all cursor-pointer"
                 onClick={() => router.push('/dashboard/services/upcoming')}
               >
                 <div className="flex items-center gap-4">
@@ -533,45 +482,43 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Latest News & Announcements */}
+      {/* News & Updates */}
       <div className="space-y-6">
-        <div className="flex items-center gap-4 px-2">
-          <div className="w-2 h-8 bg-amber-500 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]" />
-          <h2 className="text-3xl font-black tracking-tighter uppercase text-[var(--foreground)] jakarta">Latest News</h2>
+        <div className="flex items-center gap-3 px-2">
+           <div className="w-1.5 h-6 bg-amber-500 rounded-full" />
+           <h2 className="text-2xl font-black tracking-tight text-[var(--foreground)] uppercase italic">Latest Updates</h2>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {news.length > 0 ? (
-            news.map((item, idx) => (
+            news.slice(0, 6).map((item, idx) => (
               <motion.a
                 key={idx}
                 href={item.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
-                className="glass-card p-6 group hover:border-emerald-500/30 transition-all bg-[var(--surface)] border-white/5"
+                className="p-6 rounded-2xl bg-[var(--surface)] border border-[var(--border)] group hover:border-emerald-500/20 transition-all flex flex-col gap-4"
               >
-                <div className="flex flex-col h-full gap-4">
-                  <div className="flex items-center justify-between">
-                    <div className="px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-widest border border-emerald-500/20">
-                      Market News
-                    </div>
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{item.date}</span>
+                <div className="flex items-center justify-between">
+                  <div className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 text-[9px] font-bold uppercase tracking-widest border border-[var(--border)]">
+                    Market News
                   </div>
-                  <h3 className="text-sm font-black text-[var(--foreground)] line-clamp-2 leading-relaxed group-hover:text-emerald-500 transition-colors jakarta">
-                    {item.title}
-                  </h3>
-                  <div className="mt-auto pt-4 flex items-center justify-end">
-                    <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-500 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  </div>
+                  <span className="text-[10px] font-bold text-slate-400">{item.date}</span>
+                </div>
+                <h3 className="text-sm font-bold text-[var(--foreground)] line-clamp-2 leading-relaxed group-hover:text-emerald-500 transition-colors">
+                  {item.title}
+                </h3>
+                <div className="mt-auto flex items-center justify-end">
+                  <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-emerald-500 transition-all" />
                 </div>
               </motion.a>
             ))
           ) : (
             [1, 2, 3].map((i) => (
-              <div key={i} className="glass-card p-6 animate-pulse bg-black/20 border-white/5 h-32" />
+              <div key={i} className="h-32 animate-pulse bg-slate-100 dark:bg-slate-900 border border-[var(--border)] rounded-2xl" />
             ))
           )}
         </div>
@@ -579,12 +526,12 @@ export default function DashboardPage() {
 
       {/* FAB */}
       <motion.button 
-        whileHover={{ scale: 1.1, rotate: 90 }}
-        whileTap={{ scale: 0.9 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => { setEditingAccount(null); setIsAddModalOpen(true); }}
-        className="fixed bottom-10 right-10 w-20 h-20 bg-gradient-to-tr from-emerald-500 to-cyan-500 text-slate-900 dark:text-slate-950 rounded-[2rem] shadow-[0_10px_40px_-10px_rgba(0,255,159,0.5)] dark:shadow-[0_0_40px_rgba(0,255,159,0.5)] flex items-center justify-center z-50 group border-2 border-white/20"
+        className="fixed bottom-10 right-10 w-16 h-16 bg-emerald-500 text-slate-950 rounded-2xl shadow-2xl shadow-emerald-500/20 flex items-center justify-center z-50 group border border-white/20"
       >
-        <Plus className="w-10 h-10 group-hover:scale-125 transition-transform duration-500" />
+        <Plus className="w-8 h-8 group-hover:rotate-90 transition-transform duration-300" />
       </motion.button>
 
       <AddAccountModal 
@@ -634,3 +581,4 @@ export default function DashboardPage() {
     </div>
   )
 }
+

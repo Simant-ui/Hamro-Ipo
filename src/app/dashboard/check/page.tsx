@@ -81,68 +81,85 @@ export default function CheckPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-lg mx-auto pb-20">
-      {/* Header */}
-      <div className="flex items-center gap-4 mb-8">
-        <button onClick={() => router.back()} className="p-2 hover:bg-slate-900 rounded-xl transition-colors">
-          <ArrowLeft className="w-6 h-6" />
-        </button>
-        <h1 className="text-xl font-black tracking-tight">Bulk Portfolio Check</h1>
+    <div className="space-y-10 pb-24 max-w-2xl mx-auto">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+           <div className="flex items-center gap-4">
+              <button onClick={() => router.back()} className="p-2.5 bg-white dark:bg-slate-900 border border-[var(--border)] rounded-2xl hover:border-emerald-500/30 transition-all active:scale-95">
+                 <ArrowLeft className="w-5 h-5 text-slate-500" />
+              </button>
+              <h2 className="text-3xl font-black tracking-tight text-[var(--foreground)] uppercase italic leading-none">Portfolio Sync</h2>
+           </div>
+           <p className="text-sm text-slate-500 font-medium ml-14">Institutional-grade application audit across all accounts.</p>
+        </div>
       </div>
 
-      <div className="space-y-8">
-        <div className="space-y-3">
-          <label className="text-[11px] font-black uppercase tracking-widest text-slate-500 px-1">Select Category</label>
-          <div className="relative group">
-            <select 
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full appearance-none rounded-2xl px-5 py-4 font-bold border border-white/5 bg-slate-900 outline-none focus:border-emerald-500/50 transition-all text-sm"
-            >
-              <option>All Accounts</option>
-              <option>Family Accounts</option>
-              <option>Personal Accounts</option>
-            </select>
-            <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 pointer-events-none" />
-          </div>
+      {/* Control Panel */}
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+           <div className="md:col-span-2 space-y-2">
+              <label className="text-[11px] font-bold uppercase tracking-widest text-slate-500 ml-1">Account Filter</label>
+              <div className="relative group">
+                <select 
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full appearance-none rounded-2xl px-5 py-4 font-bold border border-[var(--border)] bg-white dark:bg-slate-950 outline-none focus:border-emerald-500/50 transition-all text-sm cursor-pointer"
+                >
+                  <option>All Accounts</option>
+                  <option>Family Accounts</option>
+                  <option>Personal Accounts</option>
+                </select>
+                <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+              </div>
+           </div>
+
+           <motion.button 
+             whileHover={{ scale: 1.01 }}
+             whileTap={{ scale: 0.99 }}
+             onClick={handleCheck}
+             disabled={isChecking}
+             className="bg-slate-950 dark:bg-emerald-500 text-white dark:text-slate-950 font-black py-4.5 rounded-2xl shadow-xl shadow-emerald-500/10 flex items-center justify-center gap-3 transition-all text-xs uppercase tracking-widest italic disabled:opacity-50"
+           >
+             {isChecking ? (
+               <>
+                 <Loader2 className="w-4 h-4 animate-spin" />
+                 Syncing...
+               </>
+             ) : (
+               <>
+                 <RefreshCw className="w-4 h-4" />
+                 Execute Audit
+               </>
+             )}
+           </motion.button>
         </div>
 
-        <motion.button 
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={handleCheck}
-          disabled={isChecking}
-          className="w-full border border-emerald-500/30 text-emerald-500 font-black py-4 rounded-2xl hover:bg-emerald-500/10 transition-all text-sm uppercase tracking-widest flex items-center justify-center gap-3 disabled:opacity-50"
-        >
-          {isChecking ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin" />
-              Checking Portfolio...
-            </>
-          ) : (
-            'Check Bulk Portfolio'
-          )}
-        </motion.button>
-
-        {/* Results Section */}
+        {/* Results Visualizer */}
         {results && (
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-8 space-y-6"
+            className="space-y-10"
           >
-            {/* Summary Card */}
+            {/* Global Stats */}
             {!isChecking && (
-              <div className="grid grid-cols-2 gap-4">
-                <div className="glass-card p-6 bg-emerald-500/5 border-emerald-500/10 rounded-3xl">
-                  <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1">Total Allotted</p>
-                  <p className="text-3xl font-black text-white italic">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="p-8 rounded-[32px] bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                     <CheckCircle2 className="w-16 h-16 text-emerald-500" />
+                  </div>
+                  <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-2">Total Allotted</p>
+                  <p className="text-5xl font-black text-slate-950 dark:text-white italic tracking-tighter">
                     {results.reduce((acc, res) => acc + res.applications.filter(a => a.statusName === 'Allotted').length, 0)}
                   </p>
                 </div>
-                <div className="glass-card p-6 bg-rose-500/5 border-rose-500/10 rounded-3xl">
-                  <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-1">Not Allotted</p>
-                  <p className="text-3xl font-black text-white italic">
+                <div className="p-8 rounded-[32px] bg-rose-500/5 dark:bg-rose-500/10 border border-rose-500/20 relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                     <XCircle className="w-16 h-16 text-rose-500" />
+                  </div>
+                  <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-2">Not Allotted</p>
+                  <p className="text-5xl font-black text-slate-950 dark:text-white italic tracking-tighter">
                     {results.reduce((acc, res) => acc + res.applications.filter(a => a.statusName === 'Not Allotted').length, 0)}
                   </p>
                 </div>
@@ -150,81 +167,88 @@ export default function CheckPage() {
             )}
 
             <div className="flex items-center justify-between px-1">
-              <h2 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Detailed Results</h2>
-              <p className="text-[10px] font-bold text-slate-600 uppercase italic">{results.length} Accounts Scanned</p>
+              <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">Detailed Audit Logs</h3>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">{results.length} Nodes Verified</p>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-8">
               {results.map((res, i) => (
                 <motion.div
                   key={res.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  className="glass-card p-8 rounded-[2.5rem] border border-white/5 bg-slate-900/40 backdrop-blur-3xl shadow-2xl space-y-6 group hover:border-emerald-500/20 transition-all"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="p-8 rounded-[40px] bg-[var(--surface)] border border-[var(--border)] shadow-sm hover:border-emerald-500/30 transition-all group"
                 >
-                  <div className="flex items-center justify-between border-b border-white/5 pb-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
-                        <Briefcase className="w-6 h-6 text-emerald-500" />
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-[var(--border)] pb-6 mb-6">
+                    <div className="flex items-center gap-5">
+                      <div className="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-950 flex items-center justify-center border border-[var(--border)] group-hover:bg-emerald-500/10 group-hover:border-emerald-500/20 transition-colors">
+                        <Briefcase className="w-7 h-7 text-slate-400 group-hover:text-emerald-500 transition-colors" />
                       </div>
-                      <div>
-                        <h3 className="font-black text-white tracking-wide uppercase italic">{res.name}</h3>
+                      <div className="space-y-1">
+                        <h3 className="text-xl font-black text-slate-950 dark:text-slate-100 uppercase italic tracking-tight">{res.name}</h3>
                         <p className="text-[10px] text-slate-500 font-bold tracking-widest uppercase">BOID: {res.boid}</p>
                       </div>
                     </div>
-                    {res.isLoading ? (
-                       <Loader2 className="w-5 h-5 animate-spin text-emerald-500" />
-                    ) : res.error ? (
-                       <div className="flex items-center gap-2 text-rose-500 bg-rose-500/10 px-3 py-1 rounded-full border border-rose-500/20">
-                          <XCircle className="w-4 h-4" />
-                          <span className="text-[10px] font-black uppercase tracking-widest">{res.error}</span>
-                       </div>
-                    ) : (
-                       <div className="flex flex-col items-end gap-1">
-                          <div className="flex items-center gap-2 text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                             <CheckCircle2 className="w-4 h-4" />
-                             <span className="text-[10px] font-black uppercase tracking-widest">
-                               {(res as any).isSimulated ? 'Simulated' : 'Live Data'}
-                             </span>
-                          </div>
-                          {(res as any).isSimulated && (
-                            <span className="text-[8px] font-bold text-amber-500/80 uppercase tracking-widest">Server Busy - Using Cache</span>
-                          )}
-                       </div>
-                    )}
+
+                    <div className="flex items-center gap-3">
+                      {res.isLoading ? (
+                         <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-2">
+                            <Loader2 className="w-3 h-3 animate-spin text-emerald-500" />
+                            <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Scanning</span>
+                         </div>
+                      ) : res.error ? (
+                         <div className="px-4 py-2 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-center gap-2">
+                            <AlertCircle className="w-3 h-3 text-rose-500" />
+                            <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest">{res.error}</span>
+                         </div>
+                      ) : (
+                         <div className="flex flex-col items-end gap-1.5">
+                            <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-2">
+                               <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                               <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">
+                                 {(res as any).isSimulated ? 'Cached Data' : 'Live Verified'}
+                               </span>
+                            </div>
+                            {(res as any).isSimulated && (
+                              <span className="text-[8px] font-bold text-amber-500/80 uppercase tracking-widest mr-2">MeroShare Congested</span>
+                            )}
+                         </div>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Applications List */}
-                  <div className="space-y-3">
+                  {/* Applications Infrastructure */}
+                  <div className="grid grid-cols-1 gap-4">
                     {res.applications.length > 0 ? (
                       res.applications.map((app, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 group hover:border-emerald-500/20 transition-all">
-                          <div className="flex flex-col">
-                            <span className="text-xs font-black text-white group-hover:text-emerald-500 transition-colors">{app.companyName}</span>
-                            <div className="flex items-center gap-2 mt-1">
-                              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{app.appliedKitta} Units</span>
-                              <div className="w-1 h-1 rounded-full bg-slate-700" />
-                              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Rs. {app.amount}</span>
+                        <div key={idx} className="flex items-center justify-between p-5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-[var(--border)] group/app hover:border-emerald-500/20 transition-all">
+                          <div className="space-y-1">
+                            <span className="text-sm font-black text-slate-950 dark:text-slate-100 uppercase italic tracking-tight group-hover/app:text-emerald-500 transition-colors">{app.companyName}</span>
+                            <div className="flex items-center gap-3">
+                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{app.appliedKitta} Units</span>
+                              <div className="w-1 h-1 rounded-full bg-slate-200 dark:bg-slate-800" />
+                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">NPR {app.amount}</span>
                             </div>
                           </div>
                           
                           <div className={cn(
-                            "px-4 py-1.5 rounded-xl border flex items-center gap-2",
-                            app.statusName === 'Allotted' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" :
-                            app.statusName === 'Not Allotted' ? "bg-rose-500/10 border-rose-500/20 text-rose-500" :
-                            "bg-amber-500/10 border-amber-500/20 text-amber-500"
+                            "px-4 py-2 rounded-xl border flex items-center gap-2.5",
+                            app.statusName === 'Allotted' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400" :
+                            app.statusName === 'Not Allotted' ? "bg-rose-500/10 border-rose-500/20 text-rose-600 dark:text-rose-400" :
+                            "bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400"
                           )}>
                             {app.statusName === 'Allotted' ? <CheckCircle2 className="w-3.5 h-3.5" /> : 
                              app.statusName === 'Not Allotted' ? <XCircle className="w-3.5 h-3.5" /> : 
                              <Clock className="w-3.5 h-3.5" />}
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em]">{app.statusName}</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest">{app.statusName}</span>
                           </div>
                         </div>
                       ))
                     ) : !res.isLoading && !res.error ? (
-                      <div className="text-center py-6">
-                        <p className="text-xs font-bold text-slate-500 italic">No application history found</p>
+                      <div className="py-10 text-center space-y-2 opacity-30">
+                        <History className="w-10 h-10 text-slate-400 mx-auto" />
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">History Clean</p>
                       </div>
                     ) : null}
                   </div>
@@ -235,5 +259,6 @@ export default function CheckPage() {
         )}
       </div>
     </div>
+
   )
 }

@@ -44,11 +44,36 @@ export default function RootLayout({
           toastOptions={{
             duration: 4000,
             style: {
-              background: '#0f172a',
-              color: '#f8fafc',
-              border: '1px solid rgba(255,255,255,0.05)',
-              borderRadius: '16px',
-              backdropFilter: 'blur(10px)',
+              background: 'var(--surface)',
+              color: 'var(--foreground)',
+              border: '1px solid var(--border)',
+              borderRadius: '20px',
+              fontSize: '13px',
+              fontWeight: '600',
+              padding: '12px 20px',
+              boxShadow: 'var(--card-shadow)',
+            },
+            success: {
+              style: {
+                background: '#ecfdf5',
+                color: '#065f46',
+                border: '1px solid #10b98133',
+              },
+              iconTheme: {
+                primary: '#10b981',
+                secondary: '#fff',
+              },
+            },
+            error: {
+              style: {
+                background: '#fff1f2',
+                color: '#9f1239',
+                border: '1px solid #f43f5e33',
+              },
+              iconTheme: {
+                primary: '#f43f5e',
+                secondary: '#fff',
+              },
             },
           }}
         />

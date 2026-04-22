@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Notification } from '@/types'
-import { formatDateTime } from '@/lib/utils'
+import { formatDateTime, cn } from '@/lib/utils'
 import { toast } from 'react-hot-toast'
 
 export default function NotificationsPage() {
@@ -92,87 +92,98 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Notifications</h1>
-          <p className="text-slate-400 mt-1">Stay updated with latest IPO news and alerts</p>
+    <div className="max-w-3xl mx-auto space-y-10 pb-24 px-4 md:px-0">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-black tracking-tight text-[var(--foreground)] uppercase italic leading-none">Notifications</h1>
+          <p className="text-sm text-slate-500 font-medium">Real-time terminal alerts and IPO audit reports.</p>
         </div>
         {notifications.some(n => !n.is_read) && (
           <button 
             onClick={markAllRead}
-            className="text-xs font-bold text-blue-500 hover:underline flex items-center gap-1"
+            className="flex items-center gap-2.5 px-5 py-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-[10px] font-black text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition-all uppercase tracking-[0.2em] italic shadow-sm shadow-emerald-500/5"
           >
-            <MailOpen className="w-4 h-4" />
-            Mark all as read
+            <MailOpen className="w-3.5 h-3.5" />
+            Clear Pending
           </button>
         )}
       </div>
 
       {loading ? (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {[1, 2, 3].map(i => (
-            <div key={i} className="glass-card h-24 animate-pulse" />
+            <div key={i} className="h-28 animate-pulse bg-slate-50 dark:bg-slate-900 border border-[var(--border)] rounded-[32px]" />
           ))}
         </div>
       ) : notifications.length === 0 ? (
-        <div className="glass-card p-20 text-center">
-          <Bell className="w-16 h-16 text-slate-700 mx-auto mb-6" />
-          <h3 className="text-2xl font-bold">All caught up!</h3>
-          <p className="text-slate-500 mt-2">You don&apos;t have any new notifications.</p>
+        <div className="py-24 flex flex-col items-center justify-center text-center gap-6 bg-white dark:bg-slate-900/50 border border-[var(--border)] rounded-[40px] shadow-sm">
+          <div className="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-[32px] flex items-center justify-center text-slate-300 border border-[var(--border)] group">
+             <Bell className="w-10 h-10 group-hover:rotate-12 transition-transform duration-500" />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-xl font-black text-[var(--foreground)] uppercase italic tracking-tight">System Neutral</h3>
+            <p className="text-[11px] text-slate-500 font-bold uppercase tracking-widest">No active alerts detected in this sector.</p>
+          </div>
         </div>
       ) : (
-        <div className="space-y-4">
-          <AnimatePresence>
-            {notifications.map((n) => (
+        <div className="grid grid-cols-1 gap-6">
+          <AnimatePresence mode="popLayout">
+            {notifications.map((n, i) => (
               <motion.div
                 key={n.id}
                 layout
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className={`glass-card p-6 flex gap-6 relative group transition-all duration-300 ${
-                  !n.is_read ? 'border-blue-500/30 bg-blue-600/5' : 'border-slate-800'
-                }`}
+                transition={{ delay: i * 0.05 }}
+                className={cn(
+                  "p-8 rounded-[40px] bg-[var(--surface)] border transition-all duration-500 flex flex-col md:flex-row gap-6 relative group",
+                  !n.is_read ? 'border-emerald-500/30 shadow-xl shadow-emerald-500/5' : 'border-[var(--border)] hover:border-emerald-500/20 shadow-sm'
+                )}
               >
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border ${
-                  !n.is_read ? 'bg-blue-600/10 border-blue-500/20' : 'bg-slate-800/50 border-slate-700'
-                }`}>
+                <div className={cn(
+                  "w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 border transition-all duration-500 group-hover:scale-110 group-hover:rotate-3",
+                  !n.is_read ? 'bg-emerald-500 text-slate-950 border-emerald-500/20 shadow-lg shadow-emerald-500/20' : 'bg-slate-50 dark:bg-slate-800 border-[var(--border)] text-slate-400'
+                )}>
                   {getIcon(n.type)}
                 </div>
 
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-1">
-                    <h3 className={`font-bold ${!n.is_read ? 'text-blue-400' : 'text-slate-200'}`}>
+                <div className="flex-1 space-y-3">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <h3 className={cn(
+                      "text-lg font-black tracking-tight uppercase italic",
+                      !n.is_read ? 'text-emerald-600 dark:text-emerald-400' : 'text-[var(--foreground)]'
+                    )}>
                       {n.title}
                     </h3>
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                    <div className="flex items-center gap-2 px-3 py-1 bg-slate-50 dark:bg-slate-950 border border-[var(--border)] rounded-full text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                      <Clock className="w-3 h-3" />
                       {formatDateTime(n.created_at)}
-                    </span>
+                    </div>
                   </div>
-                  <p className="text-sm text-slate-400 leading-relaxed mb-4">{n.message}</p>
+                  <p className="text-[13px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-2xl">{n.message}</p>
                   
-                  <div className="flex items-center gap-4">
+                  <div className="pt-4 flex items-center gap-8">
                     {!n.is_read && (
                       <button 
                         onClick={() => markAsRead(n.id)}
-                        className="text-[10px] font-bold text-blue-500 uppercase tracking-widest hover:underline"
+                        className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-[0.2em] hover:underline transition-all"
                       >
-                        Mark as read
+                        Acknowledge
                       </button>
                     )}
                     <button 
                       onClick={() => deleteNotification(n.id)}
-                      className="text-[10px] font-bold text-slate-500 uppercase tracking-widest hover:text-red-500 flex items-center gap-1"
+                      className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] hover:text-rose-500 flex items-center gap-2 transition-colors"
                     >
-                      <Trash2 className="w-3 h-3" />
-                      Delete
+                      <Trash2 className="w-3.5 h-3.5" />
+                      Discard
                     </button>
                   </div>
                 </div>
 
                 {!n.is_read && (
-                  <div className="absolute top-6 right-6 w-2 h-2 bg-blue-500 rounded-full" />
+                  <div className="absolute top-6 right-6 w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
                 )}
               </motion.div>
             ))}
@@ -180,5 +191,7 @@ export default function NotificationsPage() {
         </div>
       )}
     </div>
+
+
   )
 }
